@@ -1,0 +1,18 @@
+﻿# Exclude everything
+*
+
+# But include CryptoArbitrage
+!CryptoArbitrage/
+!CryptoArbitrage/**
+
+# Except these in CryptoArbitrage
+CryptoArbitrage/.vs/
+CryptoArbitrage/**/.vs/
+CryptoArbitrage/**/bin/
+CryptoArbitrage/**/obj/
+CryptoArbitrage/**/*.user
+CryptoArbitrage/**/*.suo
+CryptoArbitrage/**/*.vsidx
+
+# Include .gitignore itself
+!.gitignore
