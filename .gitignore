@@ -1,10 +1,23 @@
-# Visual Studio
-.vs/
+# Exclude everything by default
+*
 
-# Build outputs
-bin/
-obj/
+# Always include this file
+!.gitignore
 
-# User-specific files
-*.user
-*.suo
+# Include common root docs (optional but useful)
+!README.md
+!LICENSE
+!.editorconfig
+!*.sln
+
+# Include the project folder(s)
+!CryptoArbitrage/
+!CryptoArbitrage/**
+
+# Ignore build + IDE artifacts anywhere under included folders
+**/.vs/
+**/bin/
+**/obj/
+**/*.user
+**/*.suo
+**/*.vsidx
