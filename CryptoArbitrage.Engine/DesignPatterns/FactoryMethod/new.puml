@@ -1,0 +1,46 @@
+﻿@startuml
+title Factory Method - IExchangeService creation
+
+interface IExchangeService {
+  +GetName() : string
+  +GetPrice(symbol: string) : decimal
+}
+
+abstract class ExchangeService {
+  -_name : string
+  +GetName() : string
+  +GetPrice(symbol: string) : decimal
+}
+
+class BinanceService {
+  +GetPrice(symbol: string) : decimal
+}
+
+class KrakenService {
+  +GetPrice(symbol: string) : decimal
+}
+
+abstract class ExchangeServiceCreator {
+  +CreatorName : string
+  +GetService() : IExchangeService
+  #CreateExchangeService() : IExchangeService
+}
+
+class BinanceExchangeServiceCreator {
+  #CreateExchangeService() : IExchangeService
+}
+
+class KrakenExchangeServiceCreator {
+  #CreateExchangeService() : IExchangeService
+}
+
+IExchangeService <|.. ExchangeService
+ExchangeService <|-- BinanceService
+ExchangeService <|-- KrakenService
+
+ExchangeServiceCreator <|-- BinanceExchangeServiceCreator
+ExchangeServiceCreator <|-- KrakenExchangeServiceCreator
+
+BinanceExchangeServiceCreator ..> BinanceService : creates
+KrakenExchangeServiceCreator ..> KrakenService : creates
+@enduml

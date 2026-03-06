@@ -1,0 +1,12 @@
+C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\bin\Debug\net9.0\CryptoArbitrage.Engine.deps.json
+C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\bin\Debug\net9.0\CryptoArbitrage.Engine.dll
+C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\bin\Debug\net9.0\CryptoArbitrage.Engine.pdb
+C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\obj\Debug\net9.0\CryptoArbitrage.Engine.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\obj\Debug\net9.0\CryptoArbitrage.Engine.AssemblyInfoInputs.cache
+C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\obj\Debug\net9.0\CryptoArbitrage.Engine.AssemblyInfo.cs
+C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\obj\Debug\net9.0\CryptoArbitrage.Engine.csproj.CoreCompileInputs.cache
+C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\obj\Debug\net9.0\CryptoArbitrage.Engine.sourcelink.json
+C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\obj\Debug\net9.0\CryptoArbitrage.Engine.dll
+C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\obj\Debug\net9.0\refint\CryptoArbitrage.Engine.dll
+C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\obj\Debug\net9.0\CryptoArbitrage.Engine.pdb
+C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\obj\Debug\net9.0\ref\CryptoArbitrage.Engine.dll
