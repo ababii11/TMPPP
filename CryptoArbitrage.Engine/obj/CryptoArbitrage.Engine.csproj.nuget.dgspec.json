@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\HP\\RiderProjects\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine.csproj": {}
+    "C:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine.csproj": {}
   },
   "projects": {
-    "C:\\Users\\HP\\RiderProjects\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine.csproj": {
+    "C:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\HP\\RiderProjects\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine.csproj",
+        "projectUniqueName": "C:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine.csproj",
         "projectName": "CryptoArbitrage.Engine",
-        "projectPath": "C:\\Users\\HP\\RiderProjects\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine.csproj",
+        "projectPath": "C:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine.csproj",
         "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\HP\\RiderProjects\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine\\obj\\",
+        "outputPath": "C:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Engine\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\DevExpress 25.1\\Components\\Offline Packages",

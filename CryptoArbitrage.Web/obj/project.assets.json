@@ -34,11 +34,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\HP\\RiderProjects\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Web\\CryptoArbitrage.Web.csproj",
+      "projectUniqueName": "C:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Web\\CryptoArbitrage.Web.csproj",
       "projectName": "CryptoArbitrage.Web",
-      "projectPath": "C:\\Users\\HP\\RiderProjects\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Web\\CryptoArbitrage.Web.csproj",
+      "projectPath": "C:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Web\\CryptoArbitrage.Web.csproj",
       "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\HP\\RiderProjects\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Web\\obj\\",
+      "outputPath": "C:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Web\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\DevExpress 25.1\\Components\\Offline Packages",
@@ -63,8 +63,8 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "C:\\Users\\HP\\RiderProjects\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine.csproj": {
-              "projectPath": "C:\\Users\\HP\\RiderProjects\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine.csproj"
+            "C:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine.csproj": {
+              "projectPath": "C:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Engine\\CryptoArbitrage.Engine.csproj"
             }
           }
         }
