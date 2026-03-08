@@ -6,6 +6,8 @@ using ArbitrageProject.Interfaces;
 using ArbitrageProject.Services;
 using ArbitrageProject.Engines;
 using ArbitrageProject.Strategies;
+using CryptoArbitrage.Engine.DesignPatterns.FactoryMethod;
+using CryptoArbitrage.Engine.DesignPatterns.AbstractFactory;
 using CryptoArbitrage.Web.ViewModels;
 
 namespace CryptoArbitrage.Web.Controllers;
@@ -40,30 +42,63 @@ public class HomeController : Controller
             .Distinct()
             .ToList();
 
+        // SOLID: PriceProvider, ArbitrageEngine, IArbitrageStrategy, IFeeCalculator
         var priceProvider = new PriceProvider(_exchanges);
         var engine = new ArbitrageEngine(
             new SimpleArbitrageStrategy(model.MinProfitPercent),
             new FeeCalculator(model.FeePercent)
         );
 
-        var results = new List<string>();
+        var results = new List<OpportunityResult>();
+        OpportunityResult? firstProfitable = null;
 
         foreach (var symbol in symbols)
         {
             var prices = priceProvider.GetPrices(symbol);
-            if (prices.Count < 2) continue;
+            if (prices.Count < 2)
+            {
+                results.Add(new OpportunityResult { Symbol = symbol, IsProfitable = false });
+                continue;
+            }
 
-            var buy = prices.Min(p => p.Price);
-            var sell = prices.Max(p => p.Price);
+            var minPrice = prices.MinBy(p => p.Price)!;
+            var maxPrice = prices.MaxBy(p => p.Price)!;
+            var buy = minPrice.Price;
+            var sell = maxPrice.Price;
 
             var netPerUnit = engine.CheckOpportunity(buy, sell);
-            if (netPerUnit > 0)
+            var isProfitable = netPerUnit > 0;
+
+            var item = new OpportunityResult
             {
-                results.Add($"{symbol}: Buy @ {buy} -> Sell @ {sell} => Net/unit {netPerUnit:F2}");
-            }
+                Symbol = symbol,
+                BuyPrice = buy,
+                SellPrice = sell,
+                ExchangeBuy = minPrice.Exchange,
+                ExchangeSell = maxPrice.Exchange,
+                NetPerUnit = netPerUnit,
+                IsProfitable = isProfitable
+            };
+            results.Add(item);
+            if (isProfitable && firstProfitable == null)
+                firstProfitable = item;
         }
 
-        model.Opportunities = results;
+        model.Results = results;
+
+        // Factory Method: ProfitReportCreator → ProfitAnalysisReport
+        if (firstProfitable != null)
+        {
+            var reportCreator = new ProfitReportCreator(
+                firstProfitable.BuyPrice, firstProfitable.SellPrice, 1m, firstProfitable.Symbol);
+            model.SummaryReport = reportCreator.ProcessAnalysis();
+        }
+
+        // Abstract Factory: TradingPlatform + BinanceTradingFactory
+        var factory = new BinanceTradingFactory();
+        var platform = new TradingPlatform(factory);
+        model.PlatformStatus = platform.InitializePlatform();
+
         return View(model);
     }
 }

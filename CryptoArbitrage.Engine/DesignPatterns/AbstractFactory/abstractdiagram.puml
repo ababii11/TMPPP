@@ -1,0 +1,94 @@
+@startuml Abstract Factory Pattern - Complete Structure
+
+' Abstract Products
+interface IOrderTool {
+    +PlaceBuyOrder(): string
+    +PlaceSellOrder(): string
+    +CancelOrder(): string
+    +ExchangeName: string
+}
+
+interface IAnalyticsTool {
+    +AnalyzeMarketTrends(): string
+    +CalculateVolatility(): decimal
+    +GenerateTradingSignals(): string
+    +ExchangeName: string
+}
+
+' Concrete Products A1 & A2
+class BinanceOrderTool {
+    +PlaceBuyOrder(): string
+    +PlaceSellOrder(): string
+    +CancelOrder(): string
+    +ExchangeName: string
+}
+
+class KrakenOrderTool {
+    +PlaceBuyOrder(): string
+    +PlaceSellOrder(): string
+    +CancelOrder(): string
+    +ExchangeName: string
+}
+
+' Concrete Products B1 & B2
+class BinanceAnalyticsTool {
+    +AnalyzeMarketTrends(): string
+    +CalculateVolatility(): decimal
+    +GenerateTradingSignals(): string
+    +ExchangeName: string
+}
+
+class KrakenAnalyticsTool {
+    +AnalyzeMarketTrends(): string
+    +CalculateVolatility(): decimal
+    +GenerateTradingSignals(): string
+    +ExchangeName: string
+}
+
+' Abstract Factory
+interface ITradingInstrumentsFactory {
+    +CreateOrderTool(): IOrderTool
+    +CreateAnalyticsTool(): IAnalyticsTool
+}
+
+' Concrete Factories
+class BinanceTradingFactory {
+    +CreateOrderTool(): IOrderTool
+    +CreateAnalyticsTool(): IAnalyticsTool
+}
+
+class KrakenTradingFactory {
+    +CreateOrderTool(): IOrderTool
+    +CreateAnalyticsTool(): IAnalyticsTool
+}
+
+' Client
+class TradingPlatform {
+    -_factory: ITradingInstrumentsFactory
+    +InitializePlatform(): string
+    +ExecuteArbitrageStrategy(): string
+}
+
+' Abstract Products Implementation
+IOrderTool <|-- BinanceOrderTool
+IOrderTool <|-- KrakenOrderTool
+IAnalyticsTool <|-- BinanceAnalyticsTool
+IAnalyticsTool <|-- KrakenAnalyticsTool
+
+' Factory Implementation
+ITradingInstrumentsFactory <|-- BinanceTradingFactory
+ITradingInstrumentsFactory <|-- KrakenTradingFactory
+
+' Creation relationships
+BinanceTradingFactory ..> BinanceOrderTool : creates
+BinanceTradingFactory ..> BinanceAnalyticsTool : creates
+KrakenTradingFactory ..> KrakenOrderTool : creates
+KrakenTradingFactory ..> KrakenAnalyticsTool : creates
+
+ITradingInstrumentsFactory ..> IOrderTool : creates
+ITradingInstrumentsFactory ..> IAnalyticsTool : creates
+
+' Client usage
+TradingPlatform --> ITradingInstrumentsFactory : uses
+
+@enduml

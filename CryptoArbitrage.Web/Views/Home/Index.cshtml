@@ -1,8 +1,146 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model CryptoArbitrage.Web.ViewModels.ArbitrageFormViewModel
+@{
+    ViewData["Title"] = "Crypto Arbitraj";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3 mb-1">Crypto Arbitraj</h1>
+        <p class="text-muted small mb-0">Verifică oportunități de arbitraj între schimburi (Binance, Kraken)</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-5 mb-4">
+        <div class="card">
+            <div class="card-header py-2">
+                <strong>Parametri analiză</strong>
+            </div>
+            <div class="card-body">
+                <form asp-action="Index" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Simboluri</label>
+                        <input asp-for="Symbols" class="form-control" placeholder="BTC, ETH, ..." />
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Comision (%)</label>
+                            <input asp-for="FeePercent" type="number" step="0.01" class="form-control" />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Profit min (%)</label>
+                            <input asp-for="MinProfitPercent" type="number" step="0.01" class="form-control" />
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.Error))
+                    {
+                        <div class="alert alert-danger py-2 small">@Model.Error</div>
+                    }
+                    <button type="submit" class="btn btn-primary">Analizează</button>
+                </form>
+            </div>
+            <div class="card-footer py-2 bg-light small">
+                <span class="text-muted">SOLID:</span> ArbitrageEngine, PriceProvider, IArbitrageStrategy, FeeCalculator
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        @if (Model.Results.Count > 0)
+        {
+            <div class="card mb-3">
+                <div class="card-header py-2 d-flex justify-content-between align-items-center">
+                    <strong>Rezultate</strong>
+                    <span class="badge bg-secondary">@Model.Results.Count(r => r.IsProfitable) profitabile</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Simbol</th>
+                                    <th>Cumpărare</th>
+                                    <th>Vânzare</th>
+                                    <th>Net/unitate</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var r in Model.Results)
+                                {
+                                    <tr class="@(r.IsProfitable ? "table-success" : r.BuyPrice > 0 ? "table-secondary" : "")">
+                                        <td><strong>@r.Symbol</strong></td>
+                                        <td>@(r.BuyPrice > 0 ? $"{r.BuyPrice:N2} ({r.ExchangeBuy})" : "-")</td>
+                                        <td>@(r.SellPrice > 0 ? $"{r.SellPrice:N2} ({r.ExchangeSell})" : "-")</td>
+                                        <td>
+                                            @if (r.IsProfitable)
+                                            {
+                                                <span class="text-success fw-bold">+@r.NetPerUnit.ToString("N2")</span>
+                                            }
+                                            else if (r.BuyPrice > 0)
+                                            {
+                                                <span class="text-muted">@r.NetPerUnit.ToString("N2")</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">-</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (r.IsProfitable)
+                                            {
+                                                <span class="badge bg-success">Câștig</span>
+                                            }
+                                            else if (r.BuyPrice > 0)
+                                            {
+                                                <span class="badge bg-secondary">Fără oportunitate</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-light text-dark">Date insuficiente</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.SummaryReport))
+            {
+                <div class="card mb-3">
+                    <div class="card-header py-2">
+                        <strong>Raport rezumat</strong>
+                        <span class="badge bg-info ms-2">Factory Method: ProfitReportCreator</span>
+                    </div>
+                    <div class="card-body">
+                        <pre class="mb-0 small">@Model.SummaryReport</pre>
+                    </div>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.PlatformStatus))
+            {
+                <div class="card">
+                    <div class="card-header py-2">
+                        <strong>Status platformă</strong>
+                        <span class="badge bg-dark ms-2">Abstract Factory: BinanceTradingFactory</span>
+                    </div>
+                    <div class="card-body">
+                        <pre class="mb-0 small">@Model.PlatformStatus</pre>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="card">
+                <div class="card-body text-center text-muted py-5">
+                    Introdu simboluri și apasă <strong>Analizează</strong> pentru a vedea oportunitățile de arbitraj.
+                </div>
+            </div>
+        }
+    </div>
 </div>
