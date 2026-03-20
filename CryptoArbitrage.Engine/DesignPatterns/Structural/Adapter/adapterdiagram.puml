@@ -1,0 +1,61 @@
+@startuml Adapter Pattern - Crypto Structure
+
+' Target
+interface IExchangeMarketDataProvider {
+    +GetNormalizedTicker(tradingPair: string): string
+}
+
+' Adaptee / Service
+class LegacyExchangeTickerService {
+    +GetTickerLegacyFormat(baseAsset: string, quoteAsset: string): string
+}
+
+' Adapter
+class LegacyExchangeTickerAdapter {
+    -_adaptee: LegacyExchangeTickerService
+    +GetNormalizedTicker(tradingPair: string): string
+}
+
+' Client
+class ArbitrageBotClient {
+    -_marketDataProvider: IExchangeMarketDataProvider
+    +ScanPair(tradingPair: string): string
+}
+
+' Relationships
+IExchangeMarketDataProvider <|.. LegacyExchangeTickerAdapter
+LegacyExchangeTickerAdapter --> LegacyExchangeTickerService : adapts
+ArbitrageBotClient --> IExchangeMarketDataProvider : uses
+
+@enduml
+@startuml AdapterCrypto
+skinparam classAttributeIconSize 0
+
+title Adapter Pattern - Crypto Exchange Ticker Adapter
+
+class ArbitrageTickerMonitor {
+  +Process(client, pair): TickerSnapshot
+}
+
+interface IExchangeTickerClient {
+  +GetTicker(pair): TickerSnapshot
+}
+
+class BinanceLegacyTickerApi {
+  +FetchBestBidAsk(marketCode): (bid, ask)
+}
+
+class BinanceTickerAdapter {
+  - adaptee: BinanceLegacyTickerApi
+  +GetTicker(pair): TickerSnapshot
+}
+
+ArbitrageTickerMonitor --> IExchangeTickerClient
+IExchangeTickerClient <|.. BinanceTickerAdapter
+BinanceTickerAdapter --> BinanceLegacyTickerApi
+
+note bottom of BinanceTickerAdapter
+  marketCode = convertPair(pair)
+  return adaptee.FetchBestBidAsk(marketCode)
+end note
+@enduml
