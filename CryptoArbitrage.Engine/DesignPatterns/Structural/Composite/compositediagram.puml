@@ -1,0 +1,33 @@
+@startuml Composite Pattern - Crypto Portfolio
+
+interface IPortfolioComponent {
+    +Execute(): string
+}
+
+class SpotPosition {
+    +Symbol: string
+    +Quantity: decimal
+    +EntryPriceUsd: decimal
+    +Execute(): string
+}
+
+class PortfolioGroup {
+    -_children: IPortfolioComponent[]
+    +Name: string
+    +Add(component: IPortfolioComponent)
+    +Remove(component: IPortfolioComponent)
+    +GetChildren(): IPortfolioComponent[]
+    +Execute(): string
+}
+
+IPortfolioComponent <|.. SpotPosition
+IPortfolioComponent <|.. PortfolioGroup
+PortfolioGroup o--> IPortfolioComponent : contains
+
+class PortfolioClient {
+    +Run(component: IPortfolioComponent): string
+}
+
+PortfolioClient --> IPortfolioComponent : uses
+
+@enduml

@@ -1,61 +1,34 @@
-@startuml Adapter Pattern - Crypto Structure
-
-' Target
-interface IExchangeMarketDataProvider {
-    +GetNormalizedTicker(tradingPair: string): string
-}
-
-' Adaptee / Service
-class LegacyExchangeTickerService {
-    +GetTickerLegacyFormat(baseAsset: string, quoteAsset: string): string
-}
-
-' Adapter
-class LegacyExchangeTickerAdapter {
-    -_adaptee: LegacyExchangeTickerService
-    +GetNormalizedTicker(tradingPair: string): string
-}
-
-' Client
-class ArbitrageBotClient {
-    -_marketDataProvider: IExchangeMarketDataProvider
-    +ScanPair(tradingPair: string): string
-}
-
-' Relationships
-IExchangeMarketDataProvider <|.. LegacyExchangeTickerAdapter
-LegacyExchangeTickerAdapter --> LegacyExchangeTickerService : adapts
-ArbitrageBotClient --> IExchangeMarketDataProvider : uses
-
-@enduml
 @startuml AdapterCrypto
 skinparam classAttributeIconSize 0
 
-title Adapter Pattern - Crypto Exchange Ticker Adapter
+title Adapter Pattern - Crypto Market Data Adapter
 
-class ArbitrageTickerMonitor {
-  +Process(client, pair): TickerSnapshot
+class ArbitrageBotClient {
+  - _marketDataProvider: IExchangeMarketDataProvider
+  +ScanPair(tradingPair: string): string
 }
 
-interface IExchangeTickerClient {
-  +GetTicker(pair): TickerSnapshot
+interface IExchangeMarketDataProvider {
+  +GetNormalizedTicker(tradingPair: string): string
 }
 
-class BinanceLegacyTickerApi {
-  +FetchBestBidAsk(marketCode): (bid, ask)
+class LegacyExchangeTickerService {
+  +GetTickerLegacyFormat(baseAsset: string, quoteAsset: string): string
 }
 
-class BinanceTickerAdapter {
-  - adaptee: BinanceLegacyTickerApi
-  +GetTicker(pair): TickerSnapshot
+class LegacyExchangeTickerAdapter {
+  - _adaptee: LegacyExchangeTickerService
+  +GetNormalizedTicker(tradingPair: string): string
 }
 
-ArbitrageTickerMonitor --> IExchangeTickerClient
-IExchangeTickerClient <|.. BinanceTickerAdapter
-BinanceTickerAdapter --> BinanceLegacyTickerApi
+ArbitrageBotClient --> IExchangeMarketDataProvider
+IExchangeMarketDataProvider <|.. LegacyExchangeTickerAdapter
+LegacyExchangeTickerAdapter --> LegacyExchangeTickerService
 
-note bottom of BinanceTickerAdapter
-  marketCode = convertPair(pair)
-  return adaptee.FetchBestBidAsk(marketCode)
+note bottom of LegacyExchangeTickerAdapter
+  parts = tradingPair.split("/")
+  baseAsset = parts[0]
+  quoteAsset = parts[1] or "USDT"
+  return _adaptee.GetTickerLegacyFormat(baseAsset, quoteAsset)
 end note
 @enduml

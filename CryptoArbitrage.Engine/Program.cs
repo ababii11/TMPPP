@@ -1,5 +1,7 @@
 using CryptoArbitrage.Engine.DesignPatterns.AbstractFactory;
 using CryptoArbitrage.Engine.DesignPatterns.FactoryMethod;
+using CryptoArbitrage.Engine.DesignPatterns.Structural.Composite;
+using CryptoArbitrage.Engine.DesignPatterns.Structural.Facade;
 using CryptoArbitrage.Engine.DesignPatterns.Structural.Adapter;
 
 namespace CryptoArbitrage.Engine;
@@ -61,6 +63,37 @@ class Program
 
         var normalizedTicker = arbitrageClient.ScanPair("BTC/USDT");
         Console.WriteLine($">> ADAPTER RESPONSE: {normalizedTicker}");
+
+        Console.WriteLine();
+        Console.WriteLine("4. COMPOSITE PATTERN:");
+        Console.WriteLine("-------------------------------");
+
+        var tradingWallet = new PortfolioGroup("Trading Wallet");
+        tradingWallet.Add(new SpotPosition("BTC", 0.10m, 65000m));
+        tradingWallet.Add(new SpotPosition("ETH", 1.20m, 3000m));
+
+        var vault = new PortfolioGroup("Vault");
+        vault.Add(new SpotPosition("SOL", 100m, 150m));
+
+        var rootPortfolio = new PortfolioGroup("Global Portfolio");
+        rootPortfolio.Add(tradingWallet);
+        rootPortfolio.Add(vault);
+
+        Console.WriteLine(rootPortfolio.Execute());
+
+        Console.WriteLine();
+        Console.WriteLine("5. FACADE PATTERN:");
+        Console.WriteLine("-------------------------------");
+
+        var executionFacade = new ArbitrageExecutionFacade(
+            new OpportunityScannerService(),
+            new LiquidityValidationService(),
+            new OrderPlacementService(),
+            new TradeAuditService(),
+            new AdditionalArbitrageFacade());
+
+        var facadeResult = executionFacade.SubsystemOperation("TRADER-01", "BTC/USDT", 0.2m);
+        Console.WriteLine($">> {facadeResult}");
 
         Console.WriteLine("\n=== DEMO COMPLETED ===");
         Console.ReadKey();
