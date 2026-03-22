@@ -5,18 +5,25 @@
 
 <div class="row mb-4">
     <div class="col">
-        <h1 class="h3 mb-1">Crypto Arbitraj</h1>
-        <p class="text-muted small mb-0">Verifică oportunități de arbitraj între schimburi (Binance, Kraken)</p>
+        <h1 class="h3 mb-2 dashboard-title">Crypto Arbitraj</h1>
+        <p class="text-muted small mb-2">Verifică oportunități de arbitraj între schimburi (Binance, Kraken)</p>
+        <div class="d-flex flex-wrap gap-2 pattern-map">
+            <span class="pattern-chip" data-bs-toggle="tooltip" title="Adapter convertește un API legacy de ticker într-o interfață comună pentru clientul de arbitraj.">Adapter</span>
+            <span class="pattern-chip" data-bs-toggle="tooltip" title="Composite tratează uniform poziții individuale și grupuri de portofoliu.">Composite</span>
+            <span class="pattern-chip" data-bs-toggle="tooltip" title="Facade simplifică execuția oportunității printr-un singur punct de intrare.">Facade</span>
+            <span class="pattern-chip" data-bs-toggle="tooltip" title="Factory Method creează dinamic tipul de raport în funcție de context.">Factory Method</span>
+            <span class="pattern-chip" data-bs-toggle="tooltip" title="Abstract Factory inițializează instrumente de trading pentru platforme diferite.">Abstract Factory</span>
+        </div>
     </div>
 </div>
 
 <div class="row">
     <div class="col-lg-5 mb-4">
-        <div class="card">
-            <div class="card-header py-2">
+        <div class="card dashboard-card">
+            <div class="card-header py-2 dashboard-card-header">
                 <strong>Parametri analiză</strong>
             </div>
-            <div class="card-body">
+            <div class="card-body dashboard-card-body">
                 <form asp-action="Index" method="post">
                     <div class="mb-3">
                         <label class="form-label">Simboluri</label>
@@ -34,12 +41,12 @@
                     </div>
                     @if (!string.IsNullOrEmpty(Model.Error))
                     {
-                        <div class="alert alert-danger py-2 small">@Model.Error</div>
+                        <div class="alert alert-danger py-2 small"><span class="me-1">✖</span>@Model.Error</div>
                     }
-                    <button type="submit" class="btn btn-primary">Analizează</button>
+                    <button type="submit" class="btn btn-primary crypto-btn-primary">Analizează</button>
                 </form>
             </div>
-            <div class="card-footer py-2 bg-light small">
+            <div class="card-footer py-2 bg-light small dashboard-card-footer">
                 <span class="text-muted">SOLID:</span> ArbitrageEngine, PriceProvider, IArbitrageStrategy, FeeCalculator
             </div>
         </div>
@@ -48,14 +55,14 @@
     <div class="col-lg-7">
         @if (Model.Results.Count > 0)
         {
-            <div class="card mb-3">
-                <div class="card-header py-2 d-flex justify-content-between align-items-center">
+            <div class="card mb-3 dashboard-card">
+                <div class="card-header py-2 d-flex justify-content-between align-items-center dashboard-card-header">
                     <strong>Rezultate</strong>
-                    <span class="badge bg-secondary">@Model.Results.Count(r => r.IsProfitable) profitabile</span>
+                    <span class="badge summary-badge">@Model.Results.Count(r => r.IsProfitable) profitabile</span>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0 dashboard-card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <table class="table table-hover mb-0 crypto-table">
                             <thead>
                                 <tr>
                                     <th>Simbol</th>
@@ -68,18 +75,18 @@
                             <tbody>
                                 @foreach (var r in Model.Results)
                                 {
-                                    <tr class="@(r.IsProfitable ? "table-success" : r.BuyPrice > 0 ? "table-secondary" : "")">
+                                    <tr class="@(r.IsProfitable ? "table-success profit-row" : r.BuyPrice > 0 ? "table-secondary neutral-row" : "no-data-row")">
                                         <td><strong>@r.Symbol</strong></td>
                                         <td>@(r.BuyPrice > 0 ? $"{r.BuyPrice:N2} ({r.ExchangeBuy})" : "-")</td>
                                         <td>@(r.SellPrice > 0 ? $"{r.SellPrice:N2} ({r.ExchangeSell})" : "-")</td>
                                         <td>
                                             @if (r.IsProfitable)
                                             {
-                                                <span class="text-success fw-bold">+@r.NetPerUnit.ToString("N2")</span>
+                                                <span class="text-success fw-bold"><span class="me-1">↑</span>+@r.NetPerUnit.ToString("N2")</span>
                                             }
                                             else if (r.BuyPrice > 0)
                                             {
-                                                <span class="text-muted">@r.NetPerUnit.ToString("N2")</span>
+                                                <span class="text-muted"><span class="me-1">↓</span>@r.NetPerUnit.ToString("N2")</span>
                                             }
                                             else
                                             {
@@ -89,15 +96,15 @@
                                         <td>
                                             @if (r.IsProfitable)
                                             {
-                                                <span class="badge bg-success">Câștig</span>
+                                                <span class="badge bg-success"><span class="me-1">✔</span>Câștig</span>
                                             }
                                             else if (r.BuyPrice > 0)
                                             {
-                                                <span class="badge bg-secondary">Fără oportunitate</span>
+                                                <span class="badge bg-secondary"><span class="me-1">✖</span>Fără oportunitate</span>
                                             }
                                             else
                                             {
-                                                <span class="badge bg-light text-dark">Date insuficiente</span>
+                                                <span class="badge bg-light text-dark"><span class="me-1">-</span>Date insuficiente</span>
                                             }
                                         </td>
                                     </tr>
@@ -106,16 +113,108 @@
                         </table>
                     </div>
                 </div>
+                @if (!string.IsNullOrEmpty(Model.AdapterUnifiedTicker))
+                {
+                    <div class="card-footer py-2 dashboard-card-footer small">
+                        <span class="badge pattern-badge me-2" data-bs-toggle="tooltip" title="Adapter convertește datele sursă dintr-un format legacy într-un model intern unificat folosit de client.">Adapter Active <span class="ms-1">ⓘ</span></span>
+                        <span class="text-muted">@Model.AdapterContext</span>
+                    </div>
+                }
+            </div>
+
+            <div class="card mb-3 dashboard-card">
+                <div class="card-header py-2 d-flex justify-content-between align-items-center dashboard-card-header">
+                    <strong>Structural Patterns In Runtime</strong>
+                    <span class="badge summary-badge">connected to analysis flow</span>
+                </div>
+                <div class="card-body dashboard-card-body">
+                    <div class="accordion pattern-accordion" id="runtimePatternsAccordion">
+                        <div class="accordion-item bg-transparent border-0 mb-2">
+                            <h2 class="accordion-header" id="adapterRuntimeHeading">
+                                <button class="accordion-button collapsed runtime-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#adapterRuntimePanel" aria-expanded="false" aria-controls="adapterRuntimePanel">
+                                    <span class="me-2">🔌</span>Adapter - Unified Exchange Ticker
+                                </button>
+                            </h2>
+                            <div id="adapterRuntimePanel" class="accordion-collapse collapse" aria-labelledby="adapterRuntimeHeading" data-bs-parent="#runtimePatternsAccordion">
+                                <div class="accordion-body">
+                                    <p class="small text-muted mb-2">Adapter converts external API data into a unified internal model.</p>
+                                    <div class="runtime-box">
+                                        <div class="runtime-line"><span class="runtime-label">Unified payload:</span> @(!string.IsNullOrEmpty(Model.AdapterUnifiedTicker) ? Model.AdapterUnifiedTicker : "No resolved pair available")</div>
+                                        <div class="runtime-line"><span class="runtime-label">Connected where:</span> în tabelul de rezultate, prețurile Binance/Kraken sunt comparate într-un format comun.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item bg-transparent border-0 mb-2">
+                            <h2 class="accordion-header" id="compositeRuntimeHeading">
+                                <button class="accordion-button collapsed runtime-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#compositeRuntimePanel" aria-expanded="false" aria-controls="compositeRuntimePanel">
+                                    <span class="me-2">🧩</span>Composite - Portfolio Hierarchy
+                                </button>
+                            </h2>
+                            <div id="compositeRuntimePanel" class="accordion-collapse collapse" aria-labelledby="compositeRuntimeHeading" data-bs-parent="#runtimePatternsAccordion">
+                                <div class="accordion-body">
+                                    <p class="small text-muted mb-2">Composite allows treating individual and grouped assets uniformly.</p>
+                                    <div class="composite-tree-view mb-2">
+                                        <div class="tree-root">Analyzed Portfolio</div>
+                                        <ul>
+                                            <li>
+                                                Profitable Assets (@Model.Results.Count(r => r.IsProfitable))
+                                                <ul>
+                                                    @foreach (var p in Model.Results.Where(r => r.IsProfitable))
+                                                    {
+                                                        <li>@p.Symbol <span class="tree-meta">(+@p.NetPerUnit.ToString("N2"))</span></li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                Neutral/No Opportunity Assets (@Model.Results.Count(r => !r.IsProfitable && r.BuyPrice > 0))
+                                                <ul>
+                                                    @foreach (var n in Model.Results.Where(r => !r.IsProfitable && r.BuyPrice > 0))
+                                                    {
+                                                        <li>@n.Symbol <span class="tree-meta">(@n.NetPerUnit.ToString("N2"))</span></li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(Model.CompositeStructure))
+                                    {
+                                        <pre class="mb-0 small runtime-pre">@Model.CompositeStructure</pre>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item bg-transparent border-0">
+                            <h2 class="accordion-header" id="facadeRuntimeHeading">
+                                <button class="accordion-button collapsed runtime-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#facadeRuntimePanel" aria-expanded="false" aria-controls="facadeRuntimePanel">
+                                    <span class="me-2">🛡️</span>Facade - One Entry To Subsystems
+                                </button>
+                            </h2>
+                            <div id="facadeRuntimePanel" class="accordion-collapse collapse" aria-labelledby="facadeRuntimeHeading" data-bs-parent="#runtimePatternsAccordion">
+                                <div class="accordion-body">
+                                    <p class="small text-muted mb-2">Facade simplifies multiple API calls into one operation.</p>
+                                    <div class="runtime-box">
+                                        <div class="runtime-line"><span class="runtime-label">Trigger:</span> click pe Analizează (POST Index).</div>
+                                        <div class="runtime-line"><span class="runtime-label">Subsystem flow:</span> scanner -> liquidity -> order placement -> audit.</div>
+                                        <div class="runtime-line"><span class="runtime-label">Runtime result:</span> @(!string.IsNullOrEmpty(Model.FacadeExecution) ? Model.FacadeExecution : "Facade did not run because no resolved opportunity exists yet")</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             @if (!string.IsNullOrEmpty(Model.SummaryReport))
             {
-                <div class="card mb-3">
-                    <div class="card-header py-2">
+                <div class="card mb-3 dashboard-card">
+                    <div class="card-header py-2 dashboard-card-header">
                         <strong>Raport rezumat</strong>
-                        <span class="badge bg-info ms-2">Factory Method: ProfitReportCreator</span>
+                        <span class="badge pattern-badge ms-2" data-bs-toggle="tooltip" title="Factory Method definește o metodă de creare a raportului; aici este folosită de ProfitReportCreator.">Factory Method: ProfitReportCreator <span class="ms-1">ⓘ</span></span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body dashboard-card-body">
                         <pre class="mb-0 small">@Model.SummaryReport</pre>
                     </div>
                 </div>
@@ -123,12 +222,12 @@
 
             @if (!string.IsNullOrEmpty(Model.PlatformStatus))
             {
-                <div class="card">
-                    <div class="card-header py-2">
+                <div class="card dashboard-card">
+                    <div class="card-header py-2 dashboard-card-header">
                         <strong>Status platformă</strong>
-                        <span class="badge bg-dark ms-2">Abstract Factory: BinanceTradingFactory</span>
+                        <span class="badge pattern-badge ms-2" data-bs-toggle="tooltip" title="Abstract Factory construiește o familie de instrumente compatibile pentru platforma de trading selectată.">Abstract Factory: BinanceTradingFactory <span class="ms-1">ⓘ</span></span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body dashboard-card-body">
                         <pre class="mb-0 small">@Model.PlatformStatus</pre>
                     </div>
                 </div>
@@ -136,8 +235,8 @@
         }
         else
         {
-            <div class="card">
-                <div class="card-body text-center text-muted py-5">
+            <div class="card dashboard-card">
+                <div class="card-body text-center text-muted py-5 dashboard-card-body">
                     Introdu simboluri și apasă <strong>Analizează</strong> pentru a vedea oportunitățile de arbitraj.
                 </div>
             </div>

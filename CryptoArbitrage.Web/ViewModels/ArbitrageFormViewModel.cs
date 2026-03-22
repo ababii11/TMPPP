@@ -10,6 +10,11 @@ public class ArbitrageFormViewModel
     public string? Error { get; set; }
     public string? SummaryReport { get; set; }
     public string? PlatformStatus { get; set; }
+
+    public string? AdapterUnifiedTicker { get; set; }
+    public string? AdapterContext { get; set; }
+    public string? CompositeStructure { get; set; }
+    public string? FacadeExecution { get; set; }
 }
 
 public class OpportunityResult

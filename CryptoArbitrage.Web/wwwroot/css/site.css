@@ -21,6 +21,272 @@ body {
   margin-bottom: 60px;
 }
 
+:root {
+  --crypto-bg: #0f1324;
+  --crypto-surface: #171d35;
+  --crypto-surface-2: #202a4a;
+  --crypto-border: #2f3c66;
+  --crypto-text: #e8eeff;
+  --crypto-muted: #a7b6da;
+  --crypto-blue: #42a5ff;
+  --crypto-purple: #8f6bff;
+  --crypto-green: #33d17a;
+}
+
+body.crypto-dashboard {
+  color: var(--crypto-text);
+  background:
+    radial-gradient(1200px 500px at 15% -10%, rgba(66, 165, 255, 0.20), transparent 70%),
+    radial-gradient(1000px 400px at 85% -20%, rgba(143, 107, 255, 0.18), transparent 70%),
+    linear-gradient(180deg, #0f1324 0%, #111733 100%);
+  font-family: "Segoe UI", "Trebuchet MS", Verdana, sans-serif;
+}
+
+.crypto-nav {
+  background: linear-gradient(90deg, #151c36 0%, #1d2750 60%, #212e5f 100%);
+}
+
+.crypto-nav .navbar-brand,
+.crypto-nav .nav-link {
+  letter-spacing: 0.2px;
+}
+
+.crypto-nav .nav-link {
+  opacity: 0.9;
+}
+
+.crypto-nav .nav-link:hover {
+  opacity: 1;
+  color: #ffffff;
+}
+
+.dashboard-title {
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.pattern-map {
+  margin-top: 0.35rem;
+}
+
+.pattern-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(66, 165, 255, 0.14);
+  border: 1px solid rgba(66, 165, 255, 0.35);
+  color: #d8e7ff;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: help;
+}
+
+.dashboard-card {
+  border: 1px solid var(--crypto-border);
+  background: linear-gradient(180deg, rgba(32, 42, 74, 0.95) 0%, rgba(23, 29, 53, 0.95) 100%);
+  box-shadow: 0 12px 35px rgba(5, 9, 20, 0.38);
+}
+
+.dashboard-card-header {
+  background: rgba(11, 16, 34, 0.5);
+  border-bottom: 1px solid var(--crypto-border);
+}
+
+.dashboard-card-body,
+.dashboard-card-footer {
+  color: var(--crypto-text);
+}
+
+.dashboard-card-footer {
+  background: rgba(11, 16, 34, 0.35) !important;
+}
+
+.crypto-dashboard .text-muted {
+  color: var(--crypto-muted) !important;
+}
+
+.crypto-dashboard .form-control {
+  border: 1px solid var(--crypto-border);
+  background: rgba(10, 15, 31, 0.85);
+  color: var(--crypto-text);
+}
+
+.crypto-dashboard .form-label {
+  color: #ced9f7;
+}
+
+.crypto-dashboard .form-control::placeholder {
+  color: #6f7fa8;
+}
+
+.crypto-btn-primary {
+  border: 0;
+  background: linear-gradient(90deg, var(--crypto-blue) 0%, var(--crypto-purple) 100%);
+  box-shadow: 0 8px 20px rgba(66, 165, 255, 0.35);
+}
+
+.crypto-btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+.summary-badge {
+  background: linear-gradient(90deg, #2d77ff 0%, #7a58ff 100%);
+}
+
+.pattern-badge {
+  background: linear-gradient(90deg, rgba(66, 165, 255, 0.22) 0%, rgba(143, 107, 255, 0.22) 100%);
+  border: 1px solid rgba(143, 107, 255, 0.55);
+  color: #e3e8ff;
+  cursor: help;
+}
+
+.crypto-table {
+  color: var(--crypto-text);
+}
+
+.crypto-table thead th {
+  border-bottom: 1px solid var(--crypto-border);
+  background: rgba(12, 17, 35, 0.95);
+  color: #d7e4ff;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.crypto-table tbody td {
+  border-color: rgba(47, 60, 102, 0.5);
+  vertical-align: middle;
+}
+
+.crypto-table.table-hover tbody tr:hover {
+  background-color: rgba(66, 165, 255, 0.10);
+}
+
+.profit-row {
+  animation: glow-profit 1.2s ease-in-out;
+}
+
+.neutral-row {
+  background-color: rgba(124, 136, 171, 0.14) !important;
+}
+
+.no-data-row {
+  background-color: rgba(130, 137, 160, 0.10);
+}
+
+.crypto-table .badge.bg-success {
+  background: linear-gradient(90deg, #1dbf67 0%, #2fd884 100%) !important;
+}
+
+.crypto-table .badge.bg-secondary {
+  background: linear-gradient(90deg, #5f6780 0%, #737f9f 100%) !important;
+}
+
+.crypto-table .badge.bg-light {
+  background: #e8ecf7 !important;
+}
+
+.crypto-footer {
+  border-top: 1px solid var(--crypto-border) !important;
+  background: rgba(11, 16, 34, 0.55);
+}
+
+.crypto-footer a {
+  color: #9ec7ff;
+}
+
+.pattern-accordion .accordion-button.runtime-accordion-btn {
+  background: rgba(11, 16, 34, 0.55);
+  border: 1px solid rgba(66, 165, 255, 0.25);
+  color: #dfe9ff;
+  border-radius: 0.6rem;
+  font-weight: 600;
+}
+
+.pattern-accordion .accordion-button.runtime-accordion-btn:not(.collapsed) {
+  color: #ffffff;
+  background: linear-gradient(90deg, rgba(66, 165, 255, 0.22) 0%, rgba(143, 107, 255, 0.22) 100%);
+  box-shadow: none;
+}
+
+.pattern-accordion .accordion-button:focus {
+  box-shadow: 0 0 0 0.2rem rgba(66, 165, 255, 0.25);
+}
+
+.runtime-box {
+  background: rgba(12, 18, 38, 0.85);
+  border: 1px solid rgba(66, 165, 255, 0.22);
+  border-radius: 0.65rem;
+  padding: 0.65rem 0.75rem;
+}
+
+.runtime-line {
+  color: #d6e2ff;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.runtime-line + .runtime-line {
+  margin-top: 0.3rem;
+}
+
+.runtime-label {
+  color: #7fc4ff;
+  font-weight: 600;
+}
+
+.composite-tree-view {
+  border: 1px solid rgba(143, 107, 255, 0.3);
+  border-radius: 0.7rem;
+  padding: 0.65rem 0.8rem;
+  background: rgba(14, 19, 39, 0.75);
+}
+
+.composite-tree-view .tree-root {
+  font-weight: 700;
+  color: #c4d6ff;
+  margin-bottom: 0.35rem;
+}
+
+.composite-tree-view ul {
+  margin-bottom: 0.2rem;
+}
+
+.composite-tree-view li {
+  color: #d6e0fb;
+  margin-bottom: 0.15rem;
+}
+
+.tree-meta {
+  color: #96a8d7;
+}
+
+.runtime-pre {
+  border: 1px solid rgba(47, 60, 102, 0.8);
+  border-radius: 0.65rem;
+  padding: 0.65rem 0.75rem;
+  background: rgba(9, 13, 28, 0.9);
+  color: #dce6ff;
+}
+
+@keyframes glow-profit {
+  0% { box-shadow: inset 0 0 0 rgba(51, 209, 122, 0); }
+  45% { box-shadow: inset 0 0 0 999px rgba(51, 209, 122, 0.12); }
+  100% { box-shadow: inset 0 0 0 rgba(51, 209, 122, 0); }
+}
+
+@media (max-width: 991px) {
+  .pattern-map {
+    gap: 0.35rem !important;
+  }
+
+  .pattern-chip {
+    font-size: 0.7rem;
+    padding: 0.18rem 0.45rem;
+  }
+}
+
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
   color: var(--bs-secondary-color);
   text-align: end;
