@@ -1,245 +1,178 @@
-@model CryptoArbitrage.Web.ViewModels.ArbitrageFormViewModel
 @{
-    ViewData["Title"] = "Crypto Arbitraj";
+    ViewData["Title"] = "CryptoManager Dashboard";
 }
 
-<div class="row mb-4">
-    <div class="col">
-        <h1 class="h3 mb-2 dashboard-title">Crypto Arbitraj</h1>
-        <p class="text-muted small mb-2">Verifică oportunități de arbitraj între schimburi (Binance, Kraken)</p>
-        <div class="d-flex flex-wrap gap-2 pattern-map">
-            <span class="pattern-chip" data-bs-toggle="tooltip" title="Adapter convertește un API legacy de ticker într-o interfață comună pentru clientul de arbitraj.">Adapter</span>
-            <span class="pattern-chip" data-bs-toggle="tooltip" title="Composite tratează uniform poziții individuale și grupuri de portofoliu.">Composite</span>
-            <span class="pattern-chip" data-bs-toggle="tooltip" title="Facade simplifică execuția oportunității printr-un singur punct de intrare.">Facade</span>
-            <span class="pattern-chip" data-bs-toggle="tooltip" title="Factory Method creează dinamic tipul de raport în funcție de context.">Factory Method</span>
-            <span class="pattern-chip" data-bs-toggle="tooltip" title="Abstract Factory inițializează instrumente de trading pentru platforme diferite.">Abstract Factory</span>
-        </div>
-    </div>
-</div>
+<section class="hero-header mb-4">
+    <p class="hero-kicker">Crypto Portfolio Command Center</p>
+    <h1>Wallet Dashboard</h1>
+    <p class="hero-text">Real-time balances, prices and transactions with pattern-aware UX behavior.</p>
+</section>
 
-<div class="row">
-    <div class="col-lg-5 mb-4">
-        <div class="card dashboard-card">
-            <div class="card-header py-2 dashboard-card-header">
-                <strong>Parametri analiză</strong>
+<section class="dashboard-grid">
+    <article class="glass-card wallet-balance-card" id="balanceCard">
+        <header class="card-head">
+            <h2>Wallet Balance</h2>
+            <span class="pill">Proxy-safe API</span>
+        </header>
+        <div class="card-body-block">
+            <p class="big-value" id="walletBalanceValue">--</p>
+            <p class="meta-line" id="walletBalanceMeta">Waiting for data...</p>
+        </div>
+    </article>
+
+    <article class="glass-card" id="pricesCard">
+        <header class="card-head">
+            <h2>Crypto Prices</h2>
+            <span class="pill">Flyweight cards</span>
+        </header>
+        <div class="form-row" style="margin-bottom:12px;">
+            <div>
+                <label for="strategyType">Arbitrage Strategy</label>
+                <select id="strategyType" name="strategyType">
+                    <option value="simple">Simple</option>
+                    <option value="spread">Spread Based</option>
+                    <option value="triangular">Triangular</option>
+                </select>
             </div>
-            <div class="card-body dashboard-card-body">
-                <form asp-action="Index" method="post">
-                    <div class="mb-3">
-                        <label class="form-label">Simboluri</label>
-                        <input asp-for="Symbols" class="form-control" placeholder="BTC, ETH, ..." />
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <label class="form-label">Comision (%)</label>
-                            <input asp-for="FeePercent" type="number" step="0.01" class="form-control" />
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Profit min (%)</label>
-                            <input asp-for="MinProfitPercent" type="number" step="0.01" class="form-control" />
-                        </div>
-                    </div>
-                    @if (!string.IsNullOrEmpty(Model.Error))
-                    {
-                        <div class="alert alert-danger py-2 small"><span class="me-1">✖</span>@Model.Error</div>
-                    }
-                    <button type="submit" class="btn btn-primary crypto-btn-primary">Analizează</button>
-                </form>
-            </div>
-            <div class="card-footer py-2 bg-light small dashboard-card-footer">
-                <span class="text-muted">SOLID:</span> ArbitrageEngine, PriceProvider, IArbitrageStrategy, FeeCalculator
+            <div>
+                <label for="liveSymbol">Live Symbol</label>
+                <select id="liveSymbol" name="liveSymbol"></select>
             </div>
         </div>
-    </div>
+        <div class="prices-wrap" id="pricesList"></div>
+        <canvas id="pricesChart" height="120" aria-label="Prices chart"></canvas>
+        <section class="tx-decorator" id="observerFeed" style="margin-top:12px;">
+            <p><strong>Observer feed</strong></p>
+            <ul id="observerEvents" style="margin:8px 0 0 18px;"></ul>
+        </section>
+    </article>
 
-    <div class="col-lg-7">
-        @if (Model.Results.Count > 0)
-        {
-            <div class="card mb-3 dashboard-card">
-                <div class="card-header py-2 d-flex justify-content-between align-items-center dashboard-card-header">
-                    <strong>Rezultate</strong>
-                    <span class="badge summary-badge">@Model.Results.Count(r => r.IsProfitable) profitabile</span>
+    <article class="glass-card" id="transactionCard">
+        <header class="card-head">
+            <h2>Send Transaction</h2>
+            <span class="pill">Decorator metadata</span>
+        </header>
+        <form id="transactionForm" class="tx-form" novalidate>
+            <label for="fromAddress">From</label>
+            <input id="fromAddress" name="from" type="text" placeholder="0xA1..." required />
+
+            <label for="toAddress">To</label>
+            <input id="toAddress" name="to" type="text" placeholder="0xB2..." required />
+
+            <div class="form-row">
+                <div>
+                    <label for="amount">Amount</label>
+                    <input id="amount" name="amount" type="number" step="0.0001" min="0.0001" placeholder="0.2500" required />
                 </div>
-                <div class="card-body p-0 dashboard-card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0 crypto-table">
-                            <thead>
-                                <tr>
-                                    <th>Simbol</th>
-                                    <th>Cumpărare</th>
-                                    <th>Vânzare</th>
-                                    <th>Net/unitate</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var r in Model.Results)
-                                {
-                                    <tr class="@(r.IsProfitable ? "table-success profit-row" : r.BuyPrice > 0 ? "table-secondary neutral-row" : "no-data-row")">
-                                        <td><strong>@r.Symbol</strong></td>
-                                        <td>@(r.BuyPrice > 0 ? $"{r.BuyPrice:N2} ({r.ExchangeBuy})" : "-")</td>
-                                        <td>@(r.SellPrice > 0 ? $"{r.SellPrice:N2} ({r.ExchangeSell})" : "-")</td>
-                                        <td>
-                                            @if (r.IsProfitable)
-                                            {
-                                                <span class="text-success fw-bold"><span class="me-1">↑</span>+@r.NetPerUnit.ToString("N2")</span>
-                                            }
-                                            else if (r.BuyPrice > 0)
-                                            {
-                                                <span class="text-muted"><span class="me-1">↓</span>@r.NetPerUnit.ToString("N2")</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted">-</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (r.IsProfitable)
-                                            {
-                                                <span class="badge bg-success"><span class="me-1">✔</span>Câștig</span>
-                                            }
-                                            else if (r.BuyPrice > 0)
-                                            {
-                                                <span class="badge bg-secondary"><span class="me-1">✖</span>Fără oportunitate</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-light text-dark"><span class="me-1">-</span>Date insuficiente</span>
-                                            }
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                @if (!string.IsNullOrEmpty(Model.AdapterUnifiedTicker))
-                {
-                    <div class="card-footer py-2 dashboard-card-footer small">
-                        <span class="badge pattern-badge me-2" data-bs-toggle="tooltip" title="Adapter convertește datele sursă dintr-un format legacy într-un model intern unificat folosit de client.">Adapter Active <span class="ms-1">ⓘ</span></span>
-                        <span class="text-muted">@Model.AdapterContext</span>
-                    </div>
-                }
-            </div>
-
-            <div class="card mb-3 dashboard-card">
-                <div class="card-header py-2 d-flex justify-content-between align-items-center dashboard-card-header">
-                    <strong>Structural Patterns In Runtime</strong>
-                    <span class="badge summary-badge">connected to analysis flow</span>
-                </div>
-                <div class="card-body dashboard-card-body">
-                    <div class="accordion pattern-accordion" id="runtimePatternsAccordion">
-                        <div class="accordion-item bg-transparent border-0 mb-2">
-                            <h2 class="accordion-header" id="adapterRuntimeHeading">
-                                <button class="accordion-button collapsed runtime-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#adapterRuntimePanel" aria-expanded="false" aria-controls="adapterRuntimePanel">
-                                    <span class="me-2">🔌</span>Adapter - Unified Exchange Ticker
-                                </button>
-                            </h2>
-                            <div id="adapterRuntimePanel" class="accordion-collapse collapse" aria-labelledby="adapterRuntimeHeading" data-bs-parent="#runtimePatternsAccordion">
-                                <div class="accordion-body">
-                                    <p class="small text-muted mb-2">Adapter converts external API data into a unified internal model.</p>
-                                    <div class="runtime-box">
-                                        <div class="runtime-line"><span class="runtime-label">Unified payload:</span> @(!string.IsNullOrEmpty(Model.AdapterUnifiedTicker) ? Model.AdapterUnifiedTicker : "No resolved pair available")</div>
-                                        <div class="runtime-line"><span class="runtime-label">Connected where:</span> în tabelul de rezultate, prețurile Binance/Kraken sunt comparate într-un format comun.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="accordion-item bg-transparent border-0 mb-2">
-                            <h2 class="accordion-header" id="compositeRuntimeHeading">
-                                <button class="accordion-button collapsed runtime-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#compositeRuntimePanel" aria-expanded="false" aria-controls="compositeRuntimePanel">
-                                    <span class="me-2">🧩</span>Composite - Portfolio Hierarchy
-                                </button>
-                            </h2>
-                            <div id="compositeRuntimePanel" class="accordion-collapse collapse" aria-labelledby="compositeRuntimeHeading" data-bs-parent="#runtimePatternsAccordion">
-                                <div class="accordion-body">
-                                    <p class="small text-muted mb-2">Composite allows treating individual and grouped assets uniformly.</p>
-                                    <div class="composite-tree-view mb-2">
-                                        <div class="tree-root">Analyzed Portfolio</div>
-                                        <ul>
-                                            <li>
-                                                Profitable Assets (@Model.Results.Count(r => r.IsProfitable))
-                                                <ul>
-                                                    @foreach (var p in Model.Results.Where(r => r.IsProfitable))
-                                                    {
-                                                        <li>@p.Symbol <span class="tree-meta">(+@p.NetPerUnit.ToString("N2"))</span></li>
-                                                    }
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                Neutral/No Opportunity Assets (@Model.Results.Count(r => !r.IsProfitable && r.BuyPrice > 0))
-                                                <ul>
-                                                    @foreach (var n in Model.Results.Where(r => !r.IsProfitable && r.BuyPrice > 0))
-                                                    {
-                                                        <li>@n.Symbol <span class="tree-meta">(@n.NetPerUnit.ToString("N2"))</span></li>
-                                                    }
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    @if (!string.IsNullOrEmpty(Model.CompositeStructure))
-                                    {
-                                        <pre class="mb-0 small runtime-pre">@Model.CompositeStructure</pre>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="accordion-item bg-transparent border-0">
-                            <h2 class="accordion-header" id="facadeRuntimeHeading">
-                                <button class="accordion-button collapsed runtime-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#facadeRuntimePanel" aria-expanded="false" aria-controls="facadeRuntimePanel">
-                                    <span class="me-2">🛡️</span>Facade - One Entry To Subsystems
-                                </button>
-                            </h2>
-                            <div id="facadeRuntimePanel" class="accordion-collapse collapse" aria-labelledby="facadeRuntimeHeading" data-bs-parent="#runtimePatternsAccordion">
-                                <div class="accordion-body">
-                                    <p class="small text-muted mb-2">Facade simplifies multiple API calls into one operation.</p>
-                                    <div class="runtime-box">
-                                        <div class="runtime-line"><span class="runtime-label">Trigger:</span> click pe Analizează (POST Index).</div>
-                                        <div class="runtime-line"><span class="runtime-label">Subsystem flow:</span> scanner -> liquidity -> order placement -> audit.</div>
-                                        <div class="runtime-line"><span class="runtime-label">Runtime result:</span> @(!string.IsNullOrEmpty(Model.FacadeExecution) ? Model.FacadeExecution : "Facade did not run because no resolved opportunity exists yet")</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div>
+                    <label for="cryptoType">Crypto Type</label>
+                    <select id="cryptoType" name="cryptoType" required></select>
                 </div>
             </div>
 
-            @if (!string.IsNullOrEmpty(Model.SummaryReport))
-            {
-                <div class="card mb-3 dashboard-card">
-                    <div class="card-header py-2 dashboard-card-header">
-                        <strong>Raport rezumat</strong>
-                        <span class="badge pattern-badge ms-2" data-bs-toggle="tooltip" title="Factory Method definește o metodă de creare a raportului; aici este folosită de ProfitReportCreator.">Factory Method: ProfitReportCreator <span class="ms-1">ⓘ</span></span>
-                    </div>
-                    <div class="card-body dashboard-card-body">
-                        <pre class="mb-0 small">@Model.SummaryReport</pre>
-                    </div>
-                </div>
-            }
+            <section class="tx-decorator" id="transactionDecorator">
+                <p><strong>Estimated Fee:</strong> <span id="feePreview">--</span></p>
+                <p><strong>Net Amount:</strong> <span id="netAmountPreview">--</span></p>
+                <p><strong>Metadata:</strong> <span id="metaPreview">Draft transaction</span></p>
+            </section>
 
-            @if (!string.IsNullOrEmpty(Model.PlatformStatus))
-            {
-                <div class="card dashboard-card">
-                    <div class="card-header py-2 dashboard-card-header">
-                        <strong>Status platformă</strong>
-                        <span class="badge pattern-badge ms-2" data-bs-toggle="tooltip" title="Abstract Factory construiește o familie de instrumente compatibile pentru platforma de trading selectată.">Abstract Factory: BinanceTradingFactory <span class="ms-1">ⓘ</span></span>
-                    </div>
-                    <div class="card-body dashboard-card-body">
-                        <pre class="mb-0 small">@Model.PlatformStatus</pre>
-                    </div>
+            <button class="primary-btn" type="submit">Send Transaction</button>
+            <p class="inline-error" id="txFormError" hidden></p>
+        </form>
+    </article>
+
+    <article class="glass-card" id="historyCard">
+        <header class="card-head">
+            <h2>Transaction History</h2>
+            <span class="pill">Proxy loading control</span>
+        </header>
+        <div class="table-wrap">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody"></tbody>
+            </table>
+        </div>
+    </article>
+
+    <article class="glass-card" id="commandCard">
+        <header class="card-head">
+            <h2>Trade Command Engine</h2>
+            <span class="pill">Behavioral Command</span>
+        </header>
+        <form id="tradeCommandForm" class="tx-form" novalidate>
+            <div class="form-row">
+                <div>
+                    <label for="tradeExchange">Exchange</label>
+                    <select id="tradeExchange" name="exchange">
+                        <option value="binance">Binance</option>
+                        <option value="kraken">Kraken</option>
+                    </select>
                 </div>
-            }
-        }
-        else
-        {
-            <div class="card dashboard-card">
-                <div class="card-body text-center text-muted py-5 dashboard-card-body">
-                    Introdu simboluri și apasă <strong>Analizează</strong> pentru a vedea oportunitățile de arbitraj.
+                <div>
+                    <label for="tradeSide">Side</label>
+                    <select id="tradeSide" name="side">
+                        <option value="buy">Buy</option>
+                        <option value="sell">Sell</option>
+                    </select>
                 </div>
             </div>
-        }
-    </div>
-</div>
+
+            <div class="form-row">
+                <div>
+                    <label for="tradePair">Pair</label>
+                    <input id="tradePair" name="pair" type="text" value="BTC/USDT" required />
+                </div>
+                <div>
+                    <label for="tradeAmount">Amount</label>
+                    <input id="tradeAmount" name="amount" type="number" step="0.0001" min="0.0001" value="0.1" required />
+                </div>
+            </div>
+
+            <label for="tradePrice">Price</label>
+            <input id="tradePrice" name="price" type="number" step="0.01" min="0.01" value="65000" required />
+
+            <div class="form-row" style="margin-top:10px;">
+                <button class="primary-btn" type="submit">Execute Command</button>
+                <button class="primary-btn" id="undoTradeCommandBtn" type="button">Undo Last Command</button>
+            </div>
+
+            <div class="form-row" style="margin-top:10px;">
+                <div>
+                    <label for="snapshotLabel">Snapshot label</label>
+                    <input id="snapshotLabel" name="snapshotLabel" type="text" value="manual-snapshot" />
+                </div>
+                <div>
+                    <label for="snapshotSelect">Saved snapshots</label>
+                    <select id="snapshotSelect" name="snapshotSelect"></select>
+                </div>
+            </div>
+
+            <div class="form-row" style="margin-top:10px;">
+                <button class="primary-btn" id="saveBotStateBtn" type="button">Save Bot State</button>
+                <button class="primary-btn" id="restoreBotStateBtn" type="button">Restore Selected State</button>
+            </div>
+
+            <p class="inline-error" id="tradeCommandError" hidden></p>
+            <section class="tx-decorator" style="margin-top:10px;">
+                <p><strong>Command result:</strong> <span id="tradeCommandResult">-</span></p>
+                <p><strong>History count:</strong> <span id="tradeCommandHistory">0</span></p>
+                <p><strong>Active strategy:</strong> <span id="botActiveStrategy">-</span></p>
+            </section>
+        </form>
+    </article>
+</section>
+
+<div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+
+@section Scripts {
+    <script type="module" src="~/js/dashboard/dashboard.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,57 @@
+@startuml IteratorPattern
+!theme plain
+
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #F5F5F5
+skinparam classBorderColor #333333
+skinparam arrowColor #333333
+
+title Iterator Design Pattern - Crypto Arbitrage (Clean Version)
+
+package "Application Layer" {
+    class PriceProvider
+    class CryptoPriceService
+}
+
+package "Iterator Pattern" {
+    interface IIterator as "<<Iterator>>\nIIterator" {
+        + HasNext() : bool
+        + Next() : IExchangeService
+        + Reset() : void
+    }
+
+    interface IExchangeCollection as "<<Aggregate>>\nIExchangeCollection" {
+        + CreateIterator() : IIterator
+    }
+
+    class ExchangeCollection as "<<ConcreteAggregate>>\nExchangeCollection" {
+        - _exchanges : List<IExchangeService>
+        + CreateIterator() : IIterator
+    }
+
+    class ExchangeIterator as "<<ConcreteIterator>>\nExchangeIterator" {
+        - _exchanges : IReadOnlyList<IExchangeService>
+        - _position : int
+        + HasNext() : bool
+        + Next() : IExchangeService
+        + Reset() : void
+    }
+}
+
+package "Domain (Existing Project)" {
+    interface IExchangeService
+}
+
+PriceProvider --> IExchangeCollection : uses
+CryptoPriceService --> IExchangeCollection : uses
+
+ExchangeCollection ..|> IExchangeCollection
+ExchangeIterator ..|> IIterator
+ExchangeCollection --> ExchangeIterator : creates
+ExchangeIterator --> IExchangeService : traverses
+
+PriceProvider --> CryptoPriceService
+PriceProvider --> IExchangeService
+CryptoPriceService --> IExchangeService
+
+@enduml

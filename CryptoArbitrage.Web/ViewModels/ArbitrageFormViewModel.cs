@@ -5,6 +5,7 @@ public class ArbitrageFormViewModel
     public string Symbols { get; set; } = "BTC, ETH";
     public decimal FeePercent { get; set; } = 0.1m;
     public decimal MinProfitPercent { get; set; } = 0.5m;
+    public string StrategyType { get; set; } = "simple";
 
     public List<OpportunityResult> Results { get; set; } = new();
     public string? Error { get; set; }
@@ -19,6 +20,7 @@ public class ArbitrageFormViewModel
 
 public class OpportunityResult
 {
+    public string StrategyName { get; set; } = "";
     public string Symbol { get; set; } = "";
     public decimal BuyPrice { get; set; }
     public decimal SellPrice { get; set; }

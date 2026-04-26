@@ -1,10 +1,11 @@
 ﻿using ArbitrageProject.Interfaces;
+using ArbitrageProject.Models;
 
 namespace ArbitrageProject.Engines;
 
 public class ArbitrageEngine
 {
-    private readonly IArbitrageStrategy _strategy;
+    private IArbitrageStrategy _strategy;
     private readonly IFeeCalculator _feeCalculator;
 
     // Engine now only depends on strategy and fee calculator (no provider).
@@ -13,6 +14,13 @@ public class ArbitrageEngine
         _strategy = strategy;
         _feeCalculator = feeCalculator;
     }
+
+    public void SetStrategy(IArbitrageStrategy strategy)
+    {
+        _strategy = strategy;
+    }
+
+    public string GetCurrentStrategyName() => _strategy.Name;
 
     // Returns net profit per unit after fees; returns 0 or negative if not profitable.
     public decimal CheckOpportunity(decimal buyPrice, decimal sellPrice)
@@ -25,5 +33,10 @@ public class ArbitrageEngine
         var feeOnSell = _feeCalculator.CalculateFee(sellPrice);
         var net = gross - feeOnBuy - feeOnSell;
         return net;
+    }
+
+    public ArbitrageOpportunity EvaluateOpportunity(string symbol, IReadOnlyList<CryptoPrice> prices)
+    {
+        return _strategy.Evaluate(symbol, prices, _feeCalculator);
     }
 }

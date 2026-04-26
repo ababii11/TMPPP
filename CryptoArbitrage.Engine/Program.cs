@@ -3,6 +3,7 @@ using CryptoArbitrage.Engine.DesignPatterns.FactoryMethod;
 using CryptoArbitrage.Engine.DesignPatterns.Structural.Composite;
 using CryptoArbitrage.Engine.DesignPatterns.Structural.Facade;
 using CryptoArbitrage.Engine.DesignPatterns.Structural.Adapter;
+using CryptoArbitrage.Engine.DesignPatterns.Behavioral.Command;
 
 namespace CryptoArbitrage.Engine;
 
@@ -94,6 +95,11 @@ class Program
 
         var facadeResult = executionFacade.SubsystemOperation("TRADER-01", "BTC/USDT", 0.2m);
         Console.WriteLine($">> {facadeResult}");
+
+        Console.WriteLine();
+        Console.WriteLine("6. COMMAND PATTERN (BEHAVIORAL):");
+        Console.WriteLine("-------------------------------");
+        CommandDemo.Run();
 
         Console.WriteLine("\n=== DEMO COMPLETED ===");
         Console.ReadKey();

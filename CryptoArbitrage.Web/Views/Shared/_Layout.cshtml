@@ -7,13 +7,14 @@
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CryptoArbitrage.Web.styles.css" asp-append-version="true" />
 </head>
 <body class="crypto-dashboard">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark crypto-nav border-0 shadow-sm mb-4">
             <div class="container-fluid">
-                <a class="navbar-brand fw-semibold" asp-area="" asp-controller="Home" asp-action="Index">Crypto Arbitraj</a>
+                <a class="navbar-brand fw-semibold" asp-area="" asp-controller="Home" asp-action="Index">CryptoManager</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -21,10 +22,7 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Dashboard</a>
                         </li>
                     </ul>
                 </div>
@@ -39,7 +37,7 @@
 
     <footer class="footer crypto-footer text-muted">
         <div class="container">
-            &copy; 2026 - CryptoArbitrage.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2026 - CryptoArbitrage.Web
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

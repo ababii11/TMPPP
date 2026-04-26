@@ -27,7 +27,10 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        return View(new ArbitrageFormViewModel());
+        return View(new ArbitrageFormViewModel
+        {
+            StrategyType = "simple"
+        });
     }
 
     [HttpPost]
@@ -47,10 +50,9 @@ public class HomeController : Controller
 
         // SOLID: PriceProvider, ArbitrageEngine, IArbitrageStrategy, IFeeCalculator
         var priceProvider = new PriceProvider(_exchanges);
-        var engine = new ArbitrageEngine(
-            new SimpleArbitrageStrategy(model.MinProfitPercent),
-            new FeeCalculator(model.FeePercent)
-        );
+        var feeCalculator = new FeeCalculator(model.FeePercent);
+        var strategy = BuildStrategy(model);
+        var engine = new ArbitrageEngine(strategy, feeCalculator);
 
         var results = new List<OpportunityResult>();
         OpportunityResult? firstProfitable = null;
@@ -60,26 +62,27 @@ public class HomeController : Controller
             var prices = priceProvider.GetPrices(symbol);
             if (prices.Count < 2)
             {
-                results.Add(new OpportunityResult { Symbol = symbol, IsProfitable = false });
+                results.Add(new OpportunityResult
+                {
+                    Symbol = symbol,
+                    StrategyName = engine.GetCurrentStrategyName(),
+                    IsProfitable = false
+                });
                 continue;
             }
 
-            var minPrice = prices.MinBy(p => p.Price)!;
-            var maxPrice = prices.MaxBy(p => p.Price)!;
-            var buy = minPrice.Price;
-            var sell = maxPrice.Price;
-
-            var netPerUnit = engine.CheckOpportunity(buy, sell);
-            var isProfitable = netPerUnit > 0;
+            var opportunity = engine.EvaluateOpportunity(symbol, prices);
+            var isProfitable = opportunity.IsProfitable;
 
             var item = new OpportunityResult
             {
                 Symbol = symbol,
-                BuyPrice = buy,
-                SellPrice = sell,
-                ExchangeBuy = minPrice.Exchange,
-                ExchangeSell = maxPrice.Exchange,
-                NetPerUnit = netPerUnit,
+                StrategyName = opportunity.StrategyName,
+                BuyPrice = opportunity.BuyPrice,
+                SellPrice = opportunity.SellPrice,
+                ExchangeBuy = opportunity.ExchangeBuy,
+                ExchangeSell = opportunity.ExchangeSell,
+                NetPerUnit = opportunity.NetPerUnit,
                 IsProfitable = isProfitable
             };
             results.Add(item);
@@ -146,5 +149,15 @@ public class HomeController : Controller
         model.PlatformStatus = platform.InitializePlatform();
 
         return View(model);
+    }
+
+    private static IArbitrageStrategy BuildStrategy(ArbitrageFormViewModel model)
+    {
+        return model.StrategyType.ToLowerInvariant() switch
+        {
+            "triangular" => new TriangularArbitrageStrategy(model.MinProfitPercent),
+            "spread" => new SpreadBasedStrategy(5m, model.MinProfitPercent),
+            _ => new SimpleArbitrageStrategy(model.MinProfitPercent)
+        };
     }
 }

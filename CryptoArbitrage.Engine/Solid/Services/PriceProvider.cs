@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using ArbitrageProject.Interfaces;
 using ArbitrageProject.Models;
+using CryptoArbitrage.Engine.DesignPatterns.Behavioral.Iterator;
 
 namespace ArbitrageProject.Services
 {
@@ -16,9 +16,15 @@ namespace ArbitrageProject.Services
 
         public IReadOnlyList<CryptoPrice> GetPrices(string symbol)
         {
-            var list = _exchanges
-                .Select(e => new CryptoPrice(symbol, e.GetPrice(symbol), e.GetName()))
-                .ToList();
+            var collection = new ExchangeCollection(_exchanges);
+            var iterator = collection.CreateIterator();
+            var list = new List<CryptoPrice>();
+
+            while (iterator.HasNext())
+            {
+                var exchange = iterator.Next();
+                list.Add(new CryptoPrice(symbol, exchange.GetPrice(symbol), exchange.GetName()));
+            }
 
             return list;
         }

@@ -1,0 +1,49 @@
+@startuml MementoPattern
+!theme plain
+
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #F5F5F5
+skinparam classBorderColor #333333
+skinparam arrowColor #333333
+
+title Memento Design Pattern - Crypto Bot State Recovery
+
+package "Behavioral.Memento" {
+    class ArbitrageBotStateOriginator as "<<Originator>>\nArbitrageBotStateOriginator" {
+        - _balance : decimal
+        - _activeStrategy : string
+        - _openTrades : List<BotTradeRecord>
+        - _tradeHistory : List<BotTradeRecord>
+        - _walletHistory : List<WalletTransactionEntry>
+        + SaveToMemento(label) : BotStateSnapshot
+        + RestoreFromMemento(snapshot) : void
+    }
+
+    class BotStateSnapshot as "<<Memento>>\nBotStateSnapshot" {
+        + SnapshotId : string
+        + CapturedAt : DateTime
+        + Balance : decimal
+        + ActiveStrategy : string
+        + OpenTrades : IReadOnlyList<BotTradeRecord>
+        + TradeHistory : IReadOnlyList<BotTradeRecord>
+        + WalletHistory : IReadOnlyList<WalletTransactionEntry>
+    }
+
+    class StateManager as "<<Caretaker>>\nStateManager" {
+        - _snapshots : List<BotStateSnapshot>
+        + Save(originator, label) : BotStateSnapshot
+        + Restore(originator, snapshotId) : bool
+        + GetSnapshots() : IReadOnlyList<object>
+    }
+
+    class BotTradeRecord
+    class WalletTransactionEntry
+}
+
+ArbitrageBotStateOriginator --> BotStateSnapshot : creates/restores
+StateManager --> BotStateSnapshot : stores
+StateManager --> ArbitrageBotStateOriginator : restore target
+BotStateSnapshot --> BotTradeRecord
+BotStateSnapshot --> WalletTransactionEntry
+
+@enduml

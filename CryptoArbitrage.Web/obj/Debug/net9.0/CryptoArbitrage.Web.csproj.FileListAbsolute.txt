@@ -204,3 +204,8 @@ C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\ijcalhk
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\swae.build.ex.cache
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\whni76fv3i-{0}-x8g837c7vb-x8g837c7vb.gz
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\ykx1fi1tha-{0}-58vydj6qzt-58vydj6qzt.gz
+C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\hx79q9kupj-{0}-i4ylsk1frw-i4ylsk1frw.gz
+C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\vsxcy8mc01-{0}-lvubomeivo-lvubomeivo.gz
+C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\jerty59l0e-{0}-mqp1brg3fr-mqp1brg3fr.gz
+C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\7tvxn0tnk8-{0}-33ikvslwkp-33ikvslwkp.gz
+C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\g6pzh43uw3-{0}-lc559vccak-lc559vccak.gz

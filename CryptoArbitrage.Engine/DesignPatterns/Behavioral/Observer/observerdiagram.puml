@@ -1,0 +1,45 @@
+@startuml ObserverPattern
+!theme plain
+
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #F5F5F5
+skinparam classBorderColor #333333
+skinparam arrowColor #333333
+
+title Observer Design Pattern - Crypto Price Updates
+
+package "Behavioral.Observer" {
+    interface IPriceSubject as "<<Subject>>\nIPriceSubject" {
+        + Attach(observer : IPriceObserver) : void
+        + Detach(observer : IPriceObserver) : void
+        + Notify(symbol : string) : void
+    }
+
+    interface IPriceObserver as "<<Observer>>\nIPriceObserver" {
+        + Name : string
+        + Update(symbol : string, prices : IReadOnlyList<CryptoPrice>) : void
+    }
+
+    class CryptoPriceService as "<<ConcreteSubject>>\nCryptoPriceService" {
+        - _observers : List<IPriceObserver>
+        - _exchanges : IEnumerable<IExchangeService>
+        - _latestBySymbol : Dictionary<string, IReadOnlyList<CryptoPrice>>
+        + SimulatePriceTick(symbol : string) : IReadOnlyList<CryptoPrice>
+    }
+
+    class ArbitrageBot as "<<ConcreteObserver>>\nArbitrageBot"
+    class LoggerService as "<<ConcreteObserver>>\nLoggerService"
+    class AlertService as "<<ConcreteObserver>>\nAlertService"
+}
+
+IPriceSubject <|.. CryptoPriceService
+IPriceObserver <|.. ArbitrageBot
+IPriceObserver <|.. LoggerService
+IPriceObserver <|.. AlertService
+
+CryptoPriceService --> IPriceObserver : notifies
+ArbitrageBot --> ArbitrageEngine : uses
+CryptoPriceService --> IExchangeService : reads base prices
+IPriceObserver ..> CryptoPrice
+
+@enduml
