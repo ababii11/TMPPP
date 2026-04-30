@@ -5,6 +5,7 @@ using ArbitrageProject.Strategies;
 using CryptoArbitrage.Engine.DesignPatterns.Behavioral.Observer;
 using CryptoArbitrage.Engine.DesignPatterns.Behavioral.Command;
 using CryptoArbitrage.Engine.DesignPatterns.Behavioral.Memento;
+using CryptoArbitrage.Web.Services.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,8 +25,17 @@ builder.Services.AddSingleton<CryptoPriceService>(sp =>
 builder.Services.AddSingleton<TradingBotInvoker>();
 builder.Services.AddSingleton<ArbitrageBotStateOriginator>();
 builder.Services.AddSingleton<StateManager>();
+builder.Services.AddSingleton<IBotStateStore, SqlServerBotStateStore>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var persistence = scope.ServiceProvider.GetRequiredService<IBotStateStore>();
+    var originator = scope.ServiceProvider.GetRequiredService<ArbitrageBotStateOriginator>();
+    var stateManager = scope.ServiceProvider.GetRequiredService<StateManager>();
+    persistence.InitializeAsync(originator, stateManager).GetAwaiter().GetResult();
+}
 
 app.UseStaticFiles();
 app.UseRouting();

@@ -5,6 +5,7 @@ skinparam backgroundColor #FEFEFE
 skinparam classBackgroundColor #F5F5F5
 skinparam classBorderColor #333333
 skinparam arrowColor #333333
+skinparam Linetype ortho
 
 title Iterator Design Pattern - Crypto Arbitrage (Clean Version)
 

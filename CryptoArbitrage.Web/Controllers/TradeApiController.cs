@@ -3,6 +3,7 @@ using CryptoArbitrage.Web.Models;
 using CryptoArbitrage.Engine.DesignPatterns.AbstractFactory;
 using CryptoArbitrage.Engine.DesignPatterns.Behavioral.Command;
 using CryptoArbitrage.Engine.DesignPatterns.Behavioral.Memento;
+using CryptoArbitrage.Web.Services.Persistence;
 
 namespace CryptoArbitrage.Web.Controllers;
 
@@ -12,16 +13,24 @@ public class TradeApiController : ControllerBase
 {
     private readonly TradingBotInvoker _invoker;
     private readonly ArbitrageBotStateOriginator _botState;
+    private readonly StateManager _stateManager;
+    private readonly IBotStateStore _persistence;
     private static readonly object Sync = new();
 
-    public TradeApiController(TradingBotInvoker invoker, ArbitrageBotStateOriginator botState)
+    public TradeApiController(
+        TradingBotInvoker invoker,
+        ArbitrageBotStateOriginator botState,
+        StateManager stateManager,
+        IBotStateStore persistence)
     {
         _invoker = invoker;
         _botState = botState;
+        _stateManager = stateManager;
+        _persistence = persistence;
     }
 
     [HttpPost("execute")]
-    public IActionResult Execute([FromBody] TradeCommandRequest request)
+    public async Task<IActionResult> Execute([FromBody] TradeCommandRequest request)
     {
         if (request is null)
         {
@@ -61,6 +70,9 @@ public class TradeApiController : ControllerBase
             request.Price,
             execution);
 
+        var snapshot = _stateManager.Save(_botState, $"trade-{side}");
+        await _persistence.PersistSnapshotAsync(snapshot);
+
         return Ok(new
         {
             success = true,
@@ -74,7 +86,7 @@ public class TradeApiController : ControllerBase
     }
 
     [HttpPost("undo")]
-    public IActionResult Undo()
+    public async Task<IActionResult> Undo()
     {
         string undoResult;
         int history;
@@ -86,6 +98,9 @@ public class TradeApiController : ControllerBase
         }
 
         _botState.RecordUndo(undoResult);
+
+    var snapshot = _stateManager.Save(_botState, "trade-undo");
+    await _persistence.PersistSnapshotAsync(snapshot);
 
         return Ok(new
         {

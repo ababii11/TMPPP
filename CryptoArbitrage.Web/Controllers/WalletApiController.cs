@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using CryptoArbitrage.Web.Models;
 using CryptoArbitrage.Engine.DesignPatterns.Behavioral.Memento;
+using CryptoArbitrage.Web.Services.Persistence;
 
 namespace CryptoArbitrage.Web.Controllers;
 
@@ -9,10 +10,17 @@ namespace CryptoArbitrage.Web.Controllers;
 public class WalletApiController : ControllerBase
 {
     private readonly ArbitrageBotStateOriginator _botState;
+    private readonly StateManager _stateManager;
+    private readonly IBotStateStore _persistence;
 
-    public WalletApiController(ArbitrageBotStateOriginator botState)
+    public WalletApiController(
+        ArbitrageBotStateOriginator botState,
+        StateManager stateManager,
+        IBotStateStore persistence)
     {
         _botState = botState;
+        _stateManager = stateManager;
+        _persistence = persistence;
     }
 
     [HttpGet("balance")]
@@ -22,7 +30,7 @@ public class WalletApiController : ControllerBase
     }
 
     [HttpPost("transaction")]
-    public IActionResult SendTransaction([FromBody] WalletTransactionRequest request)
+    public async Task<IActionResult> SendTransaction([FromBody] WalletTransactionRequest request)
     {
         if (request is null)
         {
@@ -42,6 +50,9 @@ public class WalletApiController : ControllerBase
             request.To.Trim(),
             request.Amount,
             request.CryptoType.Trim());
+
+        var snapshot = _stateManager.Save(_botState, "wallet-transaction");
+        await _persistence.PersistSnapshotAsync(snapshot);
 
         return Ok(result);
     }

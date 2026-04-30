@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CryptoArbitrage.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9be35caff8decf5cb078c6fbf46d033cb6ffe9cd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+068d5535c2d52e8b2128f2089ed673367dd27917")]
 [assembly: System.Reflection.AssemblyProductAttribute("CryptoArbitrage.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CryptoArbitrage.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using CryptoArbitrage.Web.Models;
 using CryptoArbitrage.Engine.DesignPatterns.Behavioral.Command;
 using CryptoArbitrage.Engine.DesignPatterns.Behavioral.Memento;
+using CryptoArbitrage.Web.Services.Persistence;
 
 namespace CryptoArbitrage.Web.Controllers;
 
@@ -12,15 +13,18 @@ public class BotStateController : ControllerBase
     private readonly ArbitrageBotStateOriginator _originator;
     private readonly StateManager _stateManager;
     private readonly TradingBotInvoker _invoker;
+    private readonly IBotStateStore _persistence;
 
     public BotStateController(
         ArbitrageBotStateOriginator originator,
         StateManager stateManager,
-        TradingBotInvoker invoker)
+        TradingBotInvoker invoker,
+        IBotStateStore persistence)
     {
         _originator = originator;
         _stateManager = stateManager;
         _invoker = invoker;
+        _persistence = persistence;
     }
 
     [HttpGet("current")]
@@ -36,13 +40,14 @@ public class BotStateController : ControllerBase
     }
 
     [HttpPost("save")]
-    public IActionResult Save([FromBody] BotStateSaveRequest? request)
+    public async Task<IActionResult> Save([FromBody] BotStateSaveRequest? request)
     {
         var label = string.IsNullOrWhiteSpace(request?.Label)
             ? $"snapshot-{DateTime.UtcNow:yyyyMMdd-HHmmss}"
             : request!.Label.Trim();
 
         var snapshot = _stateManager.Save(_originator, label);
+        await _persistence.PersistSnapshotAsync(snapshot);
 
         return Ok(new
         {
@@ -56,7 +61,7 @@ public class BotStateController : ControllerBase
     }
 
     [HttpPost("restore/{snapshotId}")]
-    public IActionResult Restore(string snapshotId)
+    public async Task<IActionResult> Restore(string snapshotId)
     {
         if (string.IsNullOrWhiteSpace(snapshotId))
         {
@@ -71,6 +76,9 @@ public class BotStateController : ControllerBase
 
         // Undo stack no longer reflects restored open-trade state.
         _invoker.ClearHistory();
+
+        var currentSnapshot = _stateManager.Save(_originator, $"restore-{snapshotId.Trim()}");
+        await _persistence.PersistSnapshotAsync(currentSnapshot);
 
         return Ok(new
         {

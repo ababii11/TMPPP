@@ -2,15 +2,117 @@
     ViewData["Title"] = "CryptoManager Dashboard";
 }
 
-<section class="hero-header mb-4">
-    <p class="hero-kicker">Crypto Portfolio Command Center</p>
-    <h1>Wallet Dashboard</h1>
-    <p class="hero-text">Real-time balances, prices and transactions with pattern-aware UX behavior.</p>
+<section class="hero-header mb-4" id="overview">
+    <div class="hero-copy">
+        <p class="hero-kicker">Crypto Portfolio Command Center</p>
+        <h1>Wallet Dashboard</h1>
+        <p class="hero-text">Real-time balances, prices and transactions with pattern-aware UX behavior.</p>
+    </div>
+    <div class="hero-stats">
+        <div class="hero-stat">
+            <span class="hero-stat-label">Live source</span>
+            <strong>Binance + Kraken</strong>
+        </div>
+        <div class="hero-stat">
+            <span class="hero-stat-label">Persistence layer</span>
+            <strong>SQL Server snapshots</strong>
+        </div>
+        <div class="hero-stat">
+            <span class="hero-stat-label">Patterns in use</span>
+            <strong>Observer, Command, Memento, SQL</strong>
+        </div>
+    </div>
 </section>
 
-<section class="dashboard-grid">
+<section class="how-it-works-grid mb-4" id="how-it-works">
+    <article class="glass-card explain-card">
+        <header class="card-head">
+            <span class="card-icon">01</span>
+            <h2>How it works</h2>
+            <span class="pill">Quick map</span>
+        </header>
+        <div class="explain-body">
+            <div class="explain-step">
+                <span class="explain-step-no">1</span>
+                <div>
+                    <h3>Load exchange data</h3>
+                    <p>PriceProvider and CryptoPriceService traverse real exchange services with Iterator.</p>
+                </div>
+            </div>
+            <div class="explain-step">
+                <span class="explain-step-no">2</span>
+                <div>
+                    <h3>Evaluate opportunity</h3>
+                    <p>You can switch Strategy live; Observer listens to price ticks and reacts to spreads.</p>
+                </div>
+            </div>
+            <div class="explain-step">
+                <span class="explain-step-no">3</span>
+                <div>
+                    <h3>Persist or restore state</h3>
+                    <p>Command executes buy/sell and Memento saves balances, trades and active strategy.</p>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <article class="glass-card explain-card explain-card-accent">
+        <header class="card-head">
+            <span class="card-icon">UX</span>
+            <h2>Live control panel</h2>
+            <span class="pill">Readable UX</span>
+        </header>
+        <div class="explain-panel">
+            <p class="explain-title">What you can do here</p>
+            <ul class="explain-list">
+                <li>Compare price feeds and see the spread in real time.</li>
+                <li>Switch strategy without changing the rest of the page.</li>
+                <li>Execute trades and undo them through Command history.</li>
+                <li>Save or restore bot snapshots with Memento.</li>
+            </ul>
+        </div>
+    </article>
+</section>
+
+<section class="glass-card architecture-card mb-4" id="architecture-map">
+    <header class="card-head">
+        <span class="card-icon">FL</span>
+        <h2>Architecture map</h2>
+        <span class="pill">3 layers</span>
+    </header>
+    <div class="architecture-map">
+        <article class="architecture-node">
+            <p class="architecture-node-kicker">1. Web layer</p>
+            <h3>Dashboard and APIs</h3>
+            <p>The browser talks to MVC views and API controllers. This is where the user changes strategy, executes trades and reads state.</p>
+        </article>
+        <div class="architecture-connector" aria-hidden="true">
+            <span class="connector-line"></span>
+            <span class="connector-arrow">→</span>
+            <span class="connector-label">feeds</span>
+        </div>
+        <article class="architecture-node">
+            <p class="architecture-node-kicker">2. Behavior layer</p>
+            <h3>Pattern orchestration</h3>
+            <p>Observer publishes price updates, Command executes trades, Memento stores snapshots and Iterator walks exchange collections.</p>
+        </article>
+        <div class="architecture-connector" aria-hidden="true">
+            <span class="connector-line"></span>
+            <span class="connector-arrow">→</span>
+            <span class="connector-label">reads</span>
+        </div>
+        <article class="architecture-node">
+            <p class="architecture-node-kicker">3. Exchange layer</p>
+            <h3>Binance and Kraken services</h3>
+            <p>Real exchange services feed prices, balance data and trade context into the engine without exposing collection internals.</p>
+        </article>
+    </div>
+</section>
+
+<section class="dashboard-grid" id="live-dashboard">
     <article class="glass-card wallet-balance-card" id="balanceCard">
         <header class="card-head">
+            <span class="card-icon">WB</span>
             <h2>Wallet Balance</h2>
             <span class="pill">Proxy-safe API</span>
         </header>
@@ -22,6 +124,7 @@
 
     <article class="glass-card" id="pricesCard">
         <header class="card-head">
+            <span class="card-icon">PX</span>
             <h2>Crypto Prices</h2>
             <span class="pill">Flyweight cards</span>
         </header>
@@ -49,6 +152,7 @@
 
     <article class="glass-card" id="transactionCard">
         <header class="card-head">
+            <span class="card-icon">TX</span>
             <h2>Send Transaction</h2>
             <span class="pill">Decorator metadata</span>
         </header>
@@ -83,6 +187,7 @@
 
     <article class="glass-card" id="historyCard">
         <header class="card-head">
+            <span class="card-icon">HT</span>
             <h2>Transaction History</h2>
             <span class="pill">Proxy loading control</span>
         </header>
@@ -105,6 +210,7 @@
 
     <article class="glass-card" id="commandCard">
         <header class="card-head">
+            <span class="card-icon">CE</span>
             <h2>Trade Command Engine</h2>
             <span class="pill">Behavioral Command</span>
         </header>
@@ -160,6 +266,8 @@
                 <button class="primary-btn" id="saveBotStateBtn" type="button">Save Bot State</button>
                 <button class="primary-btn" id="restoreBotStateBtn" type="button">Restore Selected State</button>
             </div>
+
+            <p class="meta-line persistence-status" id="persistenceStatus">SQL Server persistence is loading...</p>
 
             <p class="inline-error" id="tradeCommandError" hidden></p>
             <section class="tx-decorator" style="margin-top:10px;">

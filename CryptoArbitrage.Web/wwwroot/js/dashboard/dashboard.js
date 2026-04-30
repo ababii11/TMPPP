@@ -39,6 +39,7 @@ const refs = {
   snapshotSelect: document.getElementById("snapshotSelect"),
   saveBotStateBtn: document.getElementById("saveBotStateBtn"),
   restoreBotStateBtn: document.getElementById("restoreBotStateBtn"),
+  persistenceStatus: document.getElementById("persistenceStatus"),
   botActiveStrategy: document.getElementById("botActiveStrategy"),
   historyTableBody: document.getElementById("historyTableBody"),
   toastStack: document.getElementById("toastStack")
@@ -345,6 +346,9 @@ async function refreshSnapshots() {
     option.value = "";
     option.textContent = "No snapshots";
     refs.snapshotSelect.appendChild(option);
+    if (refs.persistenceStatus) {
+      refs.persistenceStatus.textContent = "SQL Server persistence is active, but no snapshots are saved yet.";
+    }
     return;
   }
 
@@ -357,6 +361,11 @@ async function refreshSnapshots() {
 
   if (current && snapshots.some((s) => s.snapshotId === current)) {
     refs.snapshotSelect.value = current;
+  }
+
+  if (refs.persistenceStatus) {
+    const latest = snapshots[0];
+    refs.persistenceStatus.textContent = `SQL Server persistence is active | ${snapshots.length} snapshot(s) stored | latest: ${latest.label}`;
   }
 }
 

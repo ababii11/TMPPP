@@ -8,6 +8,15 @@ public class StateManager
     private readonly object _sync = new();
     private readonly List<BotStateSnapshot> _snapshots = new();
 
+    public void LoadSnapshots(IEnumerable<BotStateSnapshot> snapshots)
+    {
+        lock (_sync)
+        {
+            _snapshots.Clear();
+            _snapshots.AddRange(snapshots.OrderByDescending(s => s.CapturedAt));
+        }
+    }
+
     public BotStateSnapshot Save(ArbitrageBotStateOriginator originator, string label)
     {
         lock (_sync)
