@@ -6,40 +6,96 @@
     <div class="hero-copy">
         <p class="hero-kicker">Real-time Trading</p>
         <h1>Prices & Trading</h1>
-        <p class="hero-text">Monitor prices and execute trades.</p>
+        <p class="hero-text">Pick a strategy, inspect live spreads, then execute and review trades from the command panel.</p>
     </div>
 </section>
 
-<section class="dashboard-grid">
-    <article class="glass-card" id="pricesCard" style="grid-column: 1 / -1;">
+<section class="glass-card trading-flow-card mb-4">
+    <header class="card-head">
+        <span class="card-icon">FL</span>
+        <h2>Trading Flow</h2>
+        <span class="pill">Where things happen</span>
+    </header>
+    <div class="trading-flow-grid">
+        <div class="flow-step">
+            <span class="flow-step-no">1</span>
+            <div>
+                <h3>Market view</h3>
+                <p>Live prices, spread chart, and strategy evaluation are shown in the left panel.</p>
+            </div>
+        </div>
+        <div class="flow-step">
+            <span class="flow-step-no">2</span>
+            <div>
+                <h3>Trade execution</h3>
+                <p>Use the command engine on the right to submit buy/sell orders and undo the last command.</p>
+            </div>
+        </div>
+        <div class="flow-step">
+            <span class="flow-step-no">3</span>
+            <div>
+                <h3>Results & audit</h3>
+                <p>Command results, history, observer events, and snapshots show what happened after execution.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="dashboard-grid trading-grid">
+    <article class="glass-card trading-market-card" id="pricesCard">
         <header class="card-head">
             <span class="card-icon">PX</span>
             <h2>Crypto Prices</h2>
             <span class="pill">Flyweight cards</span>
         </header>
-        <div class="form-row" style="margin-bottom:12px;">
-            <div>
-                <label for="strategyType">Arbitrage Strategy</label>
-                <select id="strategyType" name="strategyType">
+        <div class="prices-controls">
+            <div class="prices-control-block">
+                <span class="prices-control-label">Arbitrage strategy</span>
+                <div class="strategy-segments" id="strategySegments" role="group" aria-label="Arbitrage strategy">
+                    <button type="button" class="strategy-seg is-active" data-strategy="simple" aria-pressed="true">Simple</button>
+                    <button type="button" class="strategy-seg" data-strategy="spread" aria-pressed="false">Spread</button>
+                    <button type="button" class="strategy-seg" data-strategy="triangular" aria-pressed="false">Triangular</button>
+                </div>
+                <select id="strategyType" name="strategyType" class="strategy-select-sync" title="Strategy value for API">
                     <option value="simple">Simple</option>
                     <option value="spread">Spread Based</option>
                     <option value="triangular">Triangular</option>
                 </select>
             </div>
-            <div>
-                <label for="liveSymbol">Live Symbol</label>
-                <select id="liveSymbol" name="liveSymbol"></select>
+            <div class="prices-control-block">
+                <label class="prices-control-label" for="liveSymbol">Live symbol</label>
+                <select id="liveSymbol" name="liveSymbol" class="live-symbol-select">
+                    <option value="BTC">BTC</option>
+                    <option value="ETH">ETH</option>
+                    <option value="SOL">SOL</option>
+                    <option value="ADA">ADA</option>
+                </select>
+                <p class="live-symbol-hint">Choose the pair you want to watch; the strategy buttons refresh the live view immediately.</p>
             </div>
         </div>
+
+        <div id="strategyVizBoard" class="strategy-viz-board" aria-live="polite">
+            <p class="strategy-route-line">Select a strategy and symbol to load the live spread evaluation.</p>
+        </div>
+
         <div class="prices-wrap" id="pricesList"></div>
-        <canvas id="pricesChart" height="120" aria-label="Prices chart"></canvas>
+
+        <div class="chart-panel">
+            <div class="chart-panel-head">
+                <span class="chart-panel-title">Live spread by exchange</span>
+                <span class="live-pulse" id="chartLiveStatus"><span class="live-pulse-dot" aria-hidden="true"></span> Live</span>
+                <span id="chartLastSync" class="chart-sync-age" aria-live="polite"></span>
+            </div>
+            <div id="chartLegend" class="chart-legend" aria-hidden="true"></div>
+            <canvas id="pricesChart" height="220" aria-label="Live price spread chart"></canvas>
+        </div>
         <section class="tx-decorator" id="observerFeed" style="margin-top:12px;">
             <p><strong>Observer feed</strong></p>
             <ul id="observerEvents" style="margin:8px 0 0 18px;"></ul>
         </section>
     </article>
 
-    <article class="glass-card" id="commandCard">
+    <article class="glass-card trading-command-card" id="commandCard">
         <header class="card-head">
             <span class="card-icon">CE</span>
             <h2>Trade Command Engine</h2>

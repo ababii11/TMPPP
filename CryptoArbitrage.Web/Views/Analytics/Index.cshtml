@@ -1,0 +1,99 @@
+@{
+    ViewData["Title"] = "Analytics & Monitoring - CryptoManager";
+}
+
+<section class="hero-header mb-4">
+    <div class="hero-copy">
+        <p class="hero-kicker">Analytics & System Monitoring</p>
+        <h1>Performance Analytics</h1>
+        <p class="hero-text">Detailed insights into system health, activity logs, and live spread opportunities.</p>
+        <div class="hero-actions">
+            <a class="primary-btn action-btn" asp-controller="Dashboard" asp-action="Index">Back to Dashboard</a>
+        </div>
+    </div>
+</section>
+
+<section class="dashboard-grid mb-4">
+    <article class="glass-card" id="systemStatus">
+        <header class="card-head">
+            <span class="card-icon">ST</span>
+            <h2>System Status</h2>
+            <span class="pill">Live health</span>
+        </header>
+        <div class="status-grid">
+            <div class="status-item">
+                <span class="status-label">Exchange connectivity</span>
+                <strong class="status-value ok">Online</strong>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Last price tick</span>
+                <strong class="status-value">2s ago</strong>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Execution engine</span>
+                <strong class="status-value ok">Ready</strong>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Database</span>
+                <strong class="status-value ok">Synced</strong>
+            </div>
+        </div>
+    </article>
+
+    <article class="glass-card" id="recentActivity">
+        <header class="card-head">
+            <span class="card-icon">AC</span>
+            <h2>Recent Activity</h2>
+            <span class="pill">Last 15 min</span>
+        </header>
+        <ul class="activity-list">
+            <li>
+                <span class="activity-tag">Trade</span>
+                BUY 0.10 BTC on Kraken @@ 49,668.23
+            </li>
+            <li>
+                <span class="activity-tag">Arb</span>
+                Spread 1.07% detected between Kraken and Binance
+            </li>
+            <li>
+                <span class="activity-tag">Wallet</span>
+                Snapshot saved: trade-sell | Balance $12,394.52
+            </li>
+        </ul>
+    </article>
+
+    <article class="glass-card" id="topSpreads">
+        <header class="card-head">
+            <span class="card-icon">SP</span>
+            <h2>Top 3 Live Spreads</h2>
+            <span class="pill">Summary</span>
+        </header>
+        <ul class="spread-list">
+            <li>
+                <div>
+                    <p class="spread-pair">BTC/USDT</p>
+                    <p class="spread-exchanges">Kraken → Binance</p>
+                </div>
+                <strong class="spread-value ok">1.07%</strong>
+            </li>
+            <li>
+                <div>
+                    <p class="spread-pair">ETH/USDT</p>
+                    <p class="spread-exchanges">Binance → Kraken</p>
+                </div>
+                <strong class="spread-value">0.64%</strong>
+            </li>
+            <li>
+                <div>
+                    <p class="spread-pair">SOL/USDT</p>
+                    <p class="spread-exchanges">Kraken → Binance</p>
+                </div>
+                <strong class="spread-value">0.52%</strong>
+            </li>
+        </ul>
+    </article>
+
+</section>
+
+<link rel="stylesheet" href="~/css/dashboard.css" />
+<link rel="stylesheet" href="~/css/site.css" />

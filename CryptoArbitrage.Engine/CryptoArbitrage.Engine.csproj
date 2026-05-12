@@ -11,4 +11,9 @@
     <Folder Include="DesignPatterns\AbstractFactory\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="CryptoArbitrage.Engine\**\*.cs" />
+    <Compile Remove="CryptoArbitrage.Web\**\*.cs" />
+  </ItemGroup>
+
 </Project>

@@ -205,7 +205,6 @@ C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\swae.build.ex.cach
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\whni76fv3i-{0}-x8g837c7vb-x8g837c7vb.gz
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\ykx1fi1tha-{0}-58vydj6qzt-58vydj6qzt.gz
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\vsxcy8mc01-{0}-lvubomeivo-lvubomeivo.gz
-C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\jerty59l0e-{0}-mqp1brg3fr-mqp1brg3fr.gz
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\g6pzh43uw3-{0}-lc559vccak-lc559vccak.gz
 c:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\bin\Debug\net9.0\Azure.Core.dll
 c:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\bin\Debug\net9.0\Azure.Identity.dll
@@ -242,5 +241,6 @@ c:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\bin\Debug\net9.0\runtimes\win-arm64
 c:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\bin\Debug\net9.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
 c:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\bin\Debug\net9.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
 c:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\bin\Debug\net9.0\runtimes\win\lib\net8.0\System.Runtime.Caching.dll
-c:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\7tvxn0tnk8-{0}-iyratzr5k9-iyratzr5k9.gz
-C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\hx79q9kupj-{0}-enoolsm2qj-enoolsm2qj.gz
+C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\jerty59l0e-{0}-n6rwfpfhgk-n6rwfpfhgk.gz
+C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\hx79q9kupj-{0}-d15cjxsiws-d15cjxsiws.gz
+C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\7tvxn0tnk8-{0}-eqxrh4r6bt-eqxrh4r6bt.gz

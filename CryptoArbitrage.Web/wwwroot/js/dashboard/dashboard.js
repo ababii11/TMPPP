@@ -1,10 +1,21 @@
 import { walletService, cryptoService, tradeService, botStateService } from "./services.js";
-import { setCardLoading, renderPriceCards, renderHistoryRows, showToast, formatMoney, drawPriceChart } from "./ui.js";
+import {
+  setCardLoading,
+  renderPriceCards,
+  renderHistoryRows,
+  showToast,
+  formatMoney,
+  drawPriceChart,
+  renderStrategyViz,
+  drawLiveSpreadChart
+} from "./ui.js";
 
 const ESTIMATED_FEE_PERCENT = 0.2;
 
 // Safe element getter - returns null if element doesn't exist
 const getEl = (id) => document.getElementById(id);
+
+let livePricesTimer = null;
 
 const refs = {
   balanceCard: getEl("balanceCard"),
@@ -16,6 +27,9 @@ const refs = {
   balanceMeta: getEl("walletBalanceMeta"),
   pricesList: getEl("pricesList"),
   pricesChart: getEl("pricesChart"),
+  strategyVizBoard: getEl("strategyVizBoard"),
+  chartLegend: getEl("chartLegend"),
+  chartLastSync: getEl("chartLastSync"),
   strategyType: getEl("strategyType"),
   liveSymbol: getEl("liveSymbol"),
   observerEvents: getEl("observerEvents"),
@@ -51,7 +65,9 @@ const refs = {
 const state = {
   prices: [],
   history: [],
-  observerEvents: []
+  observerEvents: [],
+  liveHistory: [],
+  liveStreamKey: ""
 };
 
 function normalizeBalance(response) {
@@ -108,22 +124,20 @@ function updateTransactionDecorator() {
 }
 
 function populateCryptoTypes(prices) {
-  if (!refs.cryptoType) {
-    return;
-  }
-  
   const fallback = ["BTC", "ETH", "SOL", "ADA"];
   const available = [...new Set([...prices.map((p) => p.symbol), ...fallback])];
 
-  refs.cryptoType.innerHTML = "";
-  available.forEach((symbol) => {
-    const option = document.createElement("option");
-    option.value = symbol;
-    option.textContent = symbol;
-    refs.cryptoType.appendChild(option);
-  });
+  if (refs.cryptoType) {
+    refs.cryptoType.innerHTML = "";
+    available.forEach((symbol) => {
+      const option = document.createElement("option");
+      option.value = symbol;
+      option.textContent = symbol;
+      refs.cryptoType.appendChild(option);
+    });
+    updateTransactionDecorator();
+  }
 
-  updateTransactionDecorator();
   populateLiveSymbols(available);
 }
 
@@ -134,17 +148,67 @@ function populateLiveSymbols(symbols) {
 
   const current = refs.liveSymbol.value;
   refs.liveSymbol.innerHTML = "";
+  const fallbackSymbols = ["BTC", "ETH", "SOL", "ADA"];
+  const source = symbols.length ? symbols : fallbackSymbols;
 
-  symbols.forEach((symbol) => {
+  source.forEach((symbol) => {
     const option = document.createElement("option");
     option.value = symbol;
     option.textContent = symbol;
     refs.liveSymbol.appendChild(option);
   });
 
-  if (current && symbols.includes(current)) {
+  if (current && source.includes(current)) {
     refs.liveSymbol.value = current;
+  } else if (source.length) {
+    refs.liveSymbol.value = source[0];
   }
+}
+
+function pushLivePriceSample(prices) {
+  const byEx = {};
+  (prices || []).forEach((p) => {
+    const ex = p.exchange || "Market";
+    byEx[ex] = Number(p.price || 0);
+  });
+  state.liveHistory.push({ t: Date.now(), byEx });
+  const maxPoints = 80;
+  while (state.liveHistory.length > maxPoints) {
+    state.liveHistory.shift();
+  }
+}
+
+function syncStrategySegmentsFromSelect() {
+  const val = refs.strategyType?.value || "simple";
+  const root = document.getElementById("strategySegments");
+  if (!root) {
+    return;
+  }
+  root.querySelectorAll(".strategy-seg").forEach((btn) => {
+    const on = btn.getAttribute("data-strategy") === val;
+    btn.classList.toggle("is-active", on);
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+}
+
+function wireStrategySegments() {
+  const root = document.getElementById("strategySegments");
+  if (!root || !refs.strategyType) {
+    return;
+  }
+  root.addEventListener("click", (event) => {
+    const btn = event.target.closest(".strategy-seg");
+    if (!btn) {
+      return;
+    }
+    const next = btn.getAttribute("data-strategy");
+    if (!next) {
+      return;
+    }
+    refs.strategyType.value = next;
+    syncStrategySegmentsFromSelect();
+    loadPrices();
+  });
 }
 
 function renderObserverEvents(events) {
@@ -196,6 +260,12 @@ async function loadPrices() {
   try {
     const strategy = refs.strategyType?.value || "simple";
     const symbol = refs.liveSymbol?.value || "BTC";
+    const streamKey = `${symbol}:${strategy}`;
+    if (refs.strategyVizBoard && state.liveStreamKey !== streamKey) {
+      state.liveStreamKey = streamKey;
+      state.liveHistory = [];
+    }
+
     const response = await cryptoService.getLivePrices(symbol, strategy);
 
     state.prices = normalizePrices(response?.prices || []);
@@ -203,7 +273,23 @@ async function loadPrices() {
 
     if (refs.pricesList) renderPriceCards(refs.pricesList, state.prices);
     populateCryptoTypes(state.prices);
-    if (refs.pricesChart) drawPriceChart(refs.pricesChart, state.prices);
+
+    if (refs.strategyVizBoard) {
+      pushLivePriceSample(state.prices);
+      if (refs.pricesChart) drawLiveSpreadChart(refs.pricesChart, state.liveHistory, refs.chartLegend);
+      renderStrategyViz(refs.strategyVizBoard, {
+        symbol: response?.symbol || symbol,
+        strategy: response?.strategy || strategy,
+        opportunity: response?.opportunity,
+        prices: state.prices
+      });
+      if (refs.chartLastSync) {
+        refs.chartLastSync.textContent = new Date().toLocaleTimeString();
+      }
+    } else if (refs.pricesChart) {
+      drawPriceChart(refs.pricesChart, state.prices);
+    }
+
     renderObserverEvents(state.observerEvents);
     if (refs.botActiveStrategy) refs.botActiveStrategy.textContent = response?.strategy || refs.botActiveStrategy.textContent;
 
@@ -217,6 +303,9 @@ async function loadPrices() {
   } catch (error) {
     if (refs.pricesList) renderPriceCards(refs.pricesList, []);
     renderObserverEvents([]);
+    if (refs.strategyVizBoard) {
+      renderStrategyViz(refs.strategyVizBoard, null);
+    }
     if (refs.toastStack) showToast(refs.toastStack, error.message, "error");
   } finally {
     setCardLoading(refs.pricesCard, false);
@@ -462,33 +551,52 @@ async function restoreBotState() {
   }
 }
 
+function startPricesLiveLoop() {
+  if (!refs.strategyVizBoard || livePricesTimer) {
+    return;
+  }
+  livePricesTimer = setInterval(() => {
+    loadPrices();
+  }, 2800);
+}
+
 function wireEvents() {
   // Only wire events for elements that exist on this page
   if (refs.transactionForm) refs.transactionForm.addEventListener("submit", submitTransaction);
   if (refs.amount) refs.amount.addEventListener("input", updateTransactionDecorator);
   if (refs.cryptoType) refs.cryptoType.addEventListener("change", updateTransactionDecorator);
-  if (refs.strategyType) refs.strategyType.addEventListener("change", loadPrices);
+  if (refs.strategyType) {
+    refs.strategyType.addEventListener("change", () => {
+      syncStrategySegmentsFromSelect();
+      loadPrices();
+    });
+  }
   if (refs.liveSymbol) refs.liveSymbol.addEventListener("change", loadPrices);
   if (refs.tradeCommandForm) refs.tradeCommandForm.addEventListener("submit", submitTradeCommand);
   if (refs.undoTradeCommandBtn) refs.undoTradeCommandBtn.addEventListener("click", undoTradeCommand);
   if (refs.saveBotStateBtn) refs.saveBotStateBtn.addEventListener("click", saveBotState);
   if (refs.restoreBotStateBtn) refs.restoreBotStateBtn.addEventListener("click", restoreBotState);
+  wireStrategySegments();
 }
 
 async function initializeDashboard() {
   wireEvents();
+  syncStrategySegmentsFromSelect();
   // Only load data if the relevant elements exist
   if (refs.cryptoType) populateCryptoTypes([]);
-  
+  populateLiveSymbols(["BTC", "ETH", "SOL", "ADA"]);
+
   const loadTasks = [];
   if (refs.balanceValue) loadTasks.push(loadBalance());
   if (refs.pricesChart) loadTasks.push(loadPrices());
   if (refs.historyTableBody) loadTasks.push(loadHistory());
-  
+
   if (loadTasks.length > 0) {
     await Promise.all(loadTasks);
   }
-  
+
+  startPricesLiveLoop();
+
   if (refs.persistenceStatus) {
     await refreshBotStatePanels();
   }
