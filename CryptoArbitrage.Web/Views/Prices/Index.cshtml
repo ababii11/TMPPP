@@ -93,6 +93,22 @@
             <p><strong>Observer feed</strong></p>
             <ul id="observerEvents" style="margin:8px 0 0 18px;"></ul>
         </section>
+        
+        <section class="tx-decorator" id="spreadPanel" style="margin-top:12px;">
+            <p><strong>Live spreads by exchange</strong></p>
+            <p id="spreadStatus" style="margin:8px 0;">Loading...</p>
+            <div class="spread-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0;">
+                <div>
+                    <span style="font-weight:500;">Binance</span><br/>
+                    Bid: <span id="binanceBid">-</span> | Ask: <span id="binanceAsk">-</span>
+                </div>
+                <div>
+                    <span style="font-weight:500;">Kraken</span><br/>
+                    Bid: <span id="krakenBid">-</span> | Ask: <span id="krakenAsk">-</span>
+                </div>
+            </div>
+            <p style="margin:8px 0;"><strong>Spread:</strong> <span id="spreadValue">-</span> (<span id="spreadPct">-</span>%)</p>
+        </section>
     </article>
 
     <article class="glass-card trading-command-card" id="commandCard">
@@ -170,4 +186,5 @@
 
 @section Scripts {
     <script type="module" src="~/js/dashboard/dashboard.js" asp-append-version="true"></script>
+    <script src="~/js/live-spread.js" asp-append-version="true"></script>
 }

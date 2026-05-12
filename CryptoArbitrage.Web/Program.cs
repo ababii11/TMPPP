@@ -7,6 +7,7 @@ using CryptoArbitrage.Engine.DesignPatterns.Behavioral.Command;
 using CryptoArbitrage.Engine.DesignPatterns.Behavioral.Memento;
 using CryptoArbitrage.Web.Services.Persistence;
 using CryptoArbitrage.Web.Services.Auth;
+using CryptoArbitrage.Web.Services.MarketData;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,9 @@ builder.Services.AddSingleton<ArbitrageBotStateOriginator>();
 builder.Services.AddSingleton<StateManager>();
 builder.Services.AddSingleton<IBotStateStore, SqlServerBotStateStore>();
 builder.Services.AddSingleton<IUserStore, SqlServerUserStore>();
+builder.Services.AddSingleton<IQuoteStore, QuoteStore>();
+builder.Services.AddHostedService<BinanceWsHostedService>();
+builder.Services.AddHostedService<KrakenWsHostedService>();
 
 var app = builder.Build();
 

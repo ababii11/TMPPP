@@ -244,3 +244,4 @@ c:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\bin\Debug\net9.0\runtimes\win\lib\n
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\jerty59l0e-{0}-n6rwfpfhgk-n6rwfpfhgk.gz
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\hx79q9kupj-{0}-d15cjxsiws-d15cjxsiws.gz
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\7tvxn0tnk8-{0}-eqxrh4r6bt-eqxrh4r6bt.gz
+C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\compressed\yymr9ohtm2-{0}-sykhd0o5hc-sykhd0o5hc.gz
