@@ -3,46 +3,49 @@ import { setCardLoading, renderPriceCards, renderHistoryRows, showToast, formatM
 
 const ESTIMATED_FEE_PERCENT = 0.2;
 
+// Safe element getter - returns null if element doesn't exist
+const getEl = (id) => document.getElementById(id);
+
 const refs = {
-  balanceCard: document.getElementById("balanceCard"),
-  pricesCard: document.getElementById("pricesCard"),
-  transactionCard: document.getElementById("transactionCard"),
-  commandCard: document.getElementById("commandCard"),
-  historyCard: document.getElementById("historyCard"),
-  balanceValue: document.getElementById("walletBalanceValue"),
-  balanceMeta: document.getElementById("walletBalanceMeta"),
-  pricesList: document.getElementById("pricesList"),
-  pricesChart: document.getElementById("pricesChart"),
-  strategyType: document.getElementById("strategyType"),
-  liveSymbol: document.getElementById("liveSymbol"),
-  observerEvents: document.getElementById("observerEvents"),
-  transactionForm: document.getElementById("transactionForm"),
-  fromAddress: document.getElementById("fromAddress"),
-  toAddress: document.getElementById("toAddress"),
-  amount: document.getElementById("amount"),
-  cryptoType: document.getElementById("cryptoType"),
-  feePreview: document.getElementById("feePreview"),
-  netAmountPreview: document.getElementById("netAmountPreview"),
-  metaPreview: document.getElementById("metaPreview"),
-  txFormError: document.getElementById("txFormError"),
-  tradeCommandForm: document.getElementById("tradeCommandForm"),
-  tradeExchange: document.getElementById("tradeExchange"),
-  tradeSide: document.getElementById("tradeSide"),
-  tradePair: document.getElementById("tradePair"),
-  tradeAmount: document.getElementById("tradeAmount"),
-  tradePrice: document.getElementById("tradePrice"),
-  undoTradeCommandBtn: document.getElementById("undoTradeCommandBtn"),
-  tradeCommandError: document.getElementById("tradeCommandError"),
-  tradeCommandResult: document.getElementById("tradeCommandResult"),
-  tradeCommandHistory: document.getElementById("tradeCommandHistory"),
-  snapshotLabel: document.getElementById("snapshotLabel"),
-  snapshotSelect: document.getElementById("snapshotSelect"),
-  saveBotStateBtn: document.getElementById("saveBotStateBtn"),
-  restoreBotStateBtn: document.getElementById("restoreBotStateBtn"),
-  persistenceStatus: document.getElementById("persistenceStatus"),
-  botActiveStrategy: document.getElementById("botActiveStrategy"),
-  historyTableBody: document.getElementById("historyTableBody"),
-  toastStack: document.getElementById("toastStack")
+  balanceCard: getEl("balanceCard"),
+  pricesCard: getEl("pricesCard"),
+  transactionCard: getEl("transactionCard"),
+  commandCard: getEl("commandCard"),
+  historyCard: getEl("historyCard"),
+  balanceValue: getEl("walletBalanceValue"),
+  balanceMeta: getEl("walletBalanceMeta"),
+  pricesList: getEl("pricesList"),
+  pricesChart: getEl("pricesChart"),
+  strategyType: getEl("strategyType"),
+  liveSymbol: getEl("liveSymbol"),
+  observerEvents: getEl("observerEvents"),
+  transactionForm: getEl("transactionForm"),
+  fromAddress: getEl("fromAddress"),
+  toAddress: getEl("toAddress"),
+  amount: getEl("amount"),
+  cryptoType: getEl("cryptoType"),
+  feePreview: getEl("feePreview"),
+  netAmountPreview: getEl("netAmountPreview"),
+  metaPreview: getEl("metaPreview"),
+  txFormError: getEl("txFormError"),
+  tradeCommandForm: getEl("tradeCommandForm"),
+  tradeExchange: getEl("tradeExchange"),
+  tradeSide: getEl("tradeSide"),
+  tradePair: getEl("tradePair"),
+  tradeAmount: getEl("tradeAmount"),
+  tradePrice: getEl("tradePrice"),
+  undoTradeCommandBtn: getEl("undoTradeCommandBtn"),
+  tradeCommandError: getEl("tradeCommandError"),
+  tradeCommandResult: getEl("tradeCommandResult"),
+  tradeCommandHistory: getEl("tradeCommandHistory"),
+  snapshotLabel: getEl("snapshotLabel"),
+  snapshotSelect: getEl("snapshotSelect"),
+  saveBotStateBtn: getEl("saveBotStateBtn"),
+  restoreBotStateBtn: getEl("restoreBotStateBtn"),
+  persistenceStatus: getEl("persistenceStatus"),
+  botActiveStrategy: getEl("botActiveStrategy"),
+  historyTableBody: getEl("historyTableBody"),
+  toastStack: getEl("toastStack")
 };
 
 const state = {
@@ -91,16 +94,24 @@ function normalizeHistory(response) {
 }
 
 function updateTransactionDecorator() {
+  if (!refs.amount || !refs.feePreview || !refs.netAmountPreview || !refs.metaPreview) {
+    return;
+  }
+  
   const amount = Number(refs.amount.value || 0);
   const fee = amount * (ESTIMATED_FEE_PERCENT / 100);
   const net = amount - fee;
 
-  refs.feePreview.textContent = `${formatMoney(fee, 6)} ${refs.cryptoType.value || ""}`;
-  refs.netAmountPreview.textContent = `${formatMoney(net, 6)} ${refs.cryptoType.value || ""}`;
+  refs.feePreview.textContent = `${formatMoney(fee, 6)} ${refs.cryptoType?.value || ""}`;
+  refs.netAmountPreview.textContent = `${formatMoney(net, 6)} ${refs.cryptoType?.value || ""}`;
   refs.metaPreview.textContent = `fee:${ESTIMATED_FEE_PERCENT.toFixed(2)}% | source:web-client`;
 }
 
 function populateCryptoTypes(prices) {
+  if (!refs.cryptoType) {
+    return;
+  }
+  
   const fallback = ["BTC", "ETH", "SOL", "ADA"];
   const available = [...new Set([...prices.map((p) => p.symbol), ...fallback])];
 
@@ -157,22 +168,30 @@ function renderObserverEvents(events) {
 }
 
 async function loadBalance() {
+  if (!refs.balanceCard) {
+    return;
+  }
+  
   setCardLoading(refs.balanceCard, true);
   try {
     const response = await walletService.getBalance();
     const wallet = normalizeBalance(response);
-    refs.balanceValue.textContent = `$${formatMoney(wallet.amount, 2)}`;
-    refs.balanceMeta.textContent = `${wallet.accountName} | ${wallet.currency}`;
+    if (refs.balanceValue) refs.balanceValue.textContent = `$${formatMoney(wallet.amount, 2)}`;
+    if (refs.balanceMeta) refs.balanceMeta.textContent = `${wallet.accountName} | ${wallet.currency}`;
   } catch (error) {
-    refs.balanceValue.textContent = "Unavailable";
-    refs.balanceMeta.textContent = "Could not read wallet balance.";
-    showToast(refs.toastStack, error.message, "error");
+    if (refs.balanceValue) refs.balanceValue.textContent = "Unavailable";
+    if (refs.balanceMeta) refs.balanceMeta.textContent = "Could not read wallet balance.";
+    if (refs.toastStack) showToast(refs.toastStack, error.message, "error");
   } finally {
     setCardLoading(refs.balanceCard, false);
   }
 }
 
 async function loadPrices() {
+  if (!refs.pricesCard) {
+    return;
+  }
+  
   setCardLoading(refs.pricesCard, true);
   try {
     const strategy = refs.strategyType?.value || "simple";
@@ -182,13 +201,13 @@ async function loadPrices() {
     state.prices = normalizePrices(response?.prices || []);
     state.observerEvents = Array.isArray(response?.observerEvents) ? response.observerEvents : [];
 
-    renderPriceCards(refs.pricesList, state.prices);
+    if (refs.pricesList) renderPriceCards(refs.pricesList, state.prices);
     populateCryptoTypes(state.prices);
-    drawPriceChart(refs.pricesChart, state.prices);
+    if (refs.pricesChart) drawPriceChart(refs.pricesChart, state.prices);
     renderObserverEvents(state.observerEvents);
-    refs.botActiveStrategy.textContent = response?.strategy || refs.botActiveStrategy.textContent;
+    if (refs.botActiveStrategy) refs.botActiveStrategy.textContent = response?.strategy || refs.botActiveStrategy.textContent;
 
-    if (response?.opportunity?.isProfitable) {
+    if (response?.opportunity?.isProfitable && refs.toastStack) {
       showToast(
         refs.toastStack,
         `Opportunity ${response.symbol}: ${response.opportunity.exchangeBuy} -> ${response.opportunity.exchangeSell}`,
@@ -196,29 +215,37 @@ async function loadPrices() {
       );
     }
   } catch (error) {
-    renderPriceCards(refs.pricesList, []);
+    if (refs.pricesList) renderPriceCards(refs.pricesList, []);
     renderObserverEvents([]);
-    showToast(refs.toastStack, error.message, "error");
+    if (refs.toastStack) showToast(refs.toastStack, error.message, "error");
   } finally {
     setCardLoading(refs.pricesCard, false);
   }
 }
 
 async function loadHistory() {
+  if (!refs.historyCard) {
+    return;
+  }
+  
   setCardLoading(refs.historyCard, true);
   try {
     const response = await walletService.getHistory();
     state.history = normalizeHistory(response);
-    renderHistoryRows(refs.historyTableBody, state.history);
+    if (refs.historyTableBody) renderHistoryRows(refs.historyTableBody, state.history);
   } catch (error) {
-    renderHistoryRows(refs.historyTableBody, []);
-    showToast(refs.toastStack, error.message, "error");
+    if (refs.historyTableBody) renderHistoryRows(refs.historyTableBody, []);
+    if (refs.toastStack) showToast(refs.toastStack, error.message, "error");
   } finally {
     setCardLoading(refs.historyCard, false);
   }
 }
 
 function getFormPayload() {
+  if (!refs.fromAddress || !refs.toAddress || !refs.amount || !refs.cryptoType) {
+    return null;
+  }
+  
   return {
     from: refs.fromAddress.value.trim(),
     to: refs.toAddress.value.trim(),
@@ -228,7 +255,7 @@ function getFormPayload() {
 }
 
 function validateForm(payload) {
-  if (!payload.from || !payload.to || !payload.cryptoType) {
+  if (!payload || !payload.from || !payload.to || !payload.cryptoType) {
     return "All fields are required.";
   }
 
@@ -240,14 +267,28 @@ function validateForm(payload) {
 }
 
 async function submitTransaction(event) {
+  if (!refs.transactionForm) {
+    return;
+  }
+  
   event.preventDefault();
-  refs.txFormError.hidden = true;
+  if (refs.txFormError) refs.txFormError.hidden = true;
 
   const payload = getFormPayload();
+  if (!payload) {
+    if (refs.txFormError) {
+      refs.txFormError.textContent = "Form elements not found.";
+      refs.txFormError.hidden = false;
+    }
+    return;
+  }
+  
   const validationError = validateForm(payload);
   if (validationError) {
-    refs.txFormError.textContent = validationError;
-    refs.txFormError.hidden = false;
+    if (refs.txFormError) {
+      refs.txFormError.textContent = validationError;
+      refs.txFormError.hidden = false;
+    }
     return;
   }
 
@@ -255,14 +296,16 @@ async function submitTransaction(event) {
 
   try {
     await walletService.postTransaction(payload);
-    showToast(refs.toastStack, "Transaction completed.", "success");
-    refs.transactionForm.reset();
+    if (refs.toastStack) showToast(refs.toastStack, "Transaction completed.", "success");
+    if (refs.transactionForm) refs.transactionForm.reset();
     populateCryptoTypes(state.prices);
     await Promise.all([loadBalance(), loadHistory()]);
   } catch (error) {
-    refs.txFormError.textContent = error.message;
-    refs.txFormError.hidden = false;
-    showToast(refs.toastStack, error.message, "error");
+    if (refs.txFormError) {
+      refs.txFormError.textContent = error.message;
+      refs.txFormError.hidden = false;
+    }
+    if (refs.toastStack) showToast(refs.toastStack, error.message, "error");
   } finally {
     setCardLoading(refs.transactionCard, false);
   }
@@ -420,22 +463,38 @@ async function restoreBotState() {
 }
 
 function wireEvents() {
-  refs.transactionForm.addEventListener("submit", submitTransaction);
-  refs.amount.addEventListener("input", updateTransactionDecorator);
-  refs.cryptoType.addEventListener("change", updateTransactionDecorator);
-  refs.strategyType?.addEventListener("change", loadPrices);
-  refs.liveSymbol?.addEventListener("change", loadPrices);
-  refs.tradeCommandForm?.addEventListener("submit", submitTradeCommand);
-  refs.undoTradeCommandBtn?.addEventListener("click", undoTradeCommand);
-  refs.saveBotStateBtn?.addEventListener("click", saveBotState);
-  refs.restoreBotStateBtn?.addEventListener("click", restoreBotState);
+  // Only wire events for elements that exist on this page
+  if (refs.transactionForm) refs.transactionForm.addEventListener("submit", submitTransaction);
+  if (refs.amount) refs.amount.addEventListener("input", updateTransactionDecorator);
+  if (refs.cryptoType) refs.cryptoType.addEventListener("change", updateTransactionDecorator);
+  if (refs.strategyType) refs.strategyType.addEventListener("change", loadPrices);
+  if (refs.liveSymbol) refs.liveSymbol.addEventListener("change", loadPrices);
+  if (refs.tradeCommandForm) refs.tradeCommandForm.addEventListener("submit", submitTradeCommand);
+  if (refs.undoTradeCommandBtn) refs.undoTradeCommandBtn.addEventListener("click", undoTradeCommand);
+  if (refs.saveBotStateBtn) refs.saveBotStateBtn.addEventListener("click", saveBotState);
+  if (refs.restoreBotStateBtn) refs.restoreBotStateBtn.addEventListener("click", restoreBotState);
 }
 
 async function initializeDashboard() {
   wireEvents();
-  populateCryptoTypes([]);
-  await Promise.all([loadBalance(), loadPrices(), loadHistory()]);
-  await refreshBotStatePanels();
+  // Only load data if the relevant elements exist
+  if (refs.cryptoType) populateCryptoTypes([]);
+  
+  const loadTasks = [];
+  if (refs.balanceValue) loadTasks.push(loadBalance());
+  if (refs.pricesChart) loadTasks.push(loadPrices());
+  if (refs.historyTableBody) loadTasks.push(loadHistory());
+  
+  if (loadTasks.length > 0) {
+    await Promise.all(loadTasks);
+  }
+  
+  if (refs.persistenceStatus) {
+    await refreshBotStatePanels();
+  }
 }
 
-initializeDashboard();
+// Only initialize if we're on a page with dashboard elements
+if (refs.toastStack || refs.pricesChart || refs.balanceValue) {
+  initializeDashboard();
+}

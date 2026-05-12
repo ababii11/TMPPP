@@ -1,0 +1,32 @@
+@startuml name
+' Product interface
+interface IAnalysisReport {
+    +GenerateReport(): string
+    +ReportType: string
+}
+' Concrete Products
+class ProfitAnalysisReport {
+    +GenerateReport(): string
+}
+class RiskAnalysisReport {
+    +GenerateReport(): string
+}
+' Abstract Creator
+abstract class AnalysisReportCreator {
+    +ProcessAnalysis(): string
+    +{abstract} CreateReport(): IAnalysisReport
+}
+' Concrete Creators
+class ProfitReportCreator {
+    +CreateReport(): IAnalysisReport
+}
+class RiskReportCreator {
+    +CreateReport(): IAnalysisReport
+}
+' Relationships
+IAnalysisReport <|-- ProfitAnalysisReport
+IAnalysisReport <|-- RiskAnalysisReport
+AnalysisReportCreator <|-- ProfitReportCreator
+AnalysisReportCreator <|-- RiskReportCreator
+AnalysisReportCreator ..> IAnalysisReport : creates
+@enduml

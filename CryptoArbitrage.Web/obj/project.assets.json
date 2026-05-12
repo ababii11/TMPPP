@@ -1908,11 +1908,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Web\\CryptoArbitrage.Web.csproj",
+      "projectUniqueName": "c:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Web\\CryptoArbitrage.Web.csproj",
       "projectName": "CryptoArbitrage.Web",
-      "projectPath": "C:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Web\\CryptoArbitrage.Web.csproj",
+      "projectPath": "c:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Web\\CryptoArbitrage.Web.csproj",
       "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "C:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Web\\obj\\",
+      "outputPath": "c:\\ProiectArbitraj\\TMPPP\\CryptoArbitrage.Web\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\DevExpress 25.1\\Components\\Offline Packages",

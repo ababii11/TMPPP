@@ -1,0 +1,75 @@
+@startuml Decorator Pattern - Crypto Structure
+skinparam classAttributeIconSize 0
+
+' 1) Client
+class DecoratorUsageExample <<Client>> {
+    +Run(): string
+}
+
+' 2) Component
+interface ICryptoOperation <<Component>> {
+    +Process(tradingPair: string, amount: decimal): string
+}
+
+' 3) Concrete Component
+class BasicTransactionService <<ConcreteComponent>> {
+    +Process(tradingPair: string, amount: decimal): string
+}
+
+' 4) Base Decorator
+abstract class CryptoOperationDecorator <<BaseDecorator>> {
+    -wrappee: ICryptoOperation
+    +CryptoOperationDecorator(component: ICryptoOperation)
+    +Process(tradingPair: string, amount: decimal): string
+}
+
+' 5) Concrete Decorators
+class LoggingDecorator <<ConcreteDecorator>> {
+    +Process(tradingPair: string, amount: decimal): string
+    +LogTransaction(): void
+}
+
+class FeeDecorator <<ConcreteDecorator>> {
+    -_feeRate: decimal
+    +Process(tradingPair: string, amount: decimal): string
+    +ApplyFee(amount: decimal): decimal
+}
+
+class SecurityCheckDecorator <<ConcreteDecorator>> {
+    +Process(tradingPair: string, amount: decimal): string
+    +ValidateInput(tradingPair: string, amount: decimal): void
+}
+
+' Relationships
+DecoratorUsageExample --> ICryptoOperation : uses
+
+ICryptoOperation <|.. BasicTransactionService
+ICryptoOperation <|.. CryptoOperationDecorator
+
+CryptoOperationDecorator <|-- LoggingDecorator
+CryptoOperationDecorator <|-- FeeDecorator
+CryptoOperationDecorator <|-- SecurityCheckDecorator
+
+CryptoOperationDecorator o--> ICryptoOperation : wrappee
+
+note right of DecoratorUsageExample
+a = new BasicTransactionService()
+b = new LoggingDecorator(a)
+c = new FeeDecorator(b)
+d = new SecurityCheckDecorator(c)
+d.Process("BTC/USDT", 0.1500)
+
+Decorator -> Decorator -> Component
+end note
+
+note right of CryptoOperationDecorator
+wrappee = component
+wrappee.Process(...)
+end note
+
+note right of SecurityCheckDecorator
+super.Process(...)
+ValidateInput(...)
+end note
+
+@enduml

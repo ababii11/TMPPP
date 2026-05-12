@@ -1,0 +1,185 @@
+@{
+    ViewData["Title"] = "Wallet - CryptoManager";
+}
+
+<section class="hero-header mb-4">
+    <div class="hero-copy">
+        <p class="hero-kicker">Portfolio Management</p>
+        <h1>Wallet Dashboard</h1>
+        <p class="hero-text">Manage your balance and send transactions.</p>
+    </div>
+</section>
+
+<section class="dashboard-grid">
+    <article class="glass-card wallet-balance-card" id="balanceCard">
+        <header class="card-head">
+            <span class="card-icon">WB</span>
+            <h2>Wallet Balance</h2>
+            <span class="pill">Proxy-safe API</span>
+        </header>
+        <div class="card-body-block">
+            <p class="big-value" id="walletBalanceValue">--</p>
+            <p class="meta-line" id="walletBalanceMeta">Waiting for data...</p>
+        </div>
+    </article>
+
+    <article class="glass-card" id="transactionCard">
+        <header class="card-head">
+            <span class="card-icon">TX</span>
+            <h2>Send Transaction</h2>
+            <span class="pill">Decorator metadata</span>
+        </header>
+        <form id="transactionForm" class="tx-form" novalidate>
+            <label for="fromAddress">From</label>
+            <input id="fromAddress" name="from" type="text" placeholder="0xA1..." required />
+
+            <label for="toAddress">To</label>
+            <input id="toAddress" name="to" type="text" placeholder="0xB2..." required />
+
+            <div class="form-row">
+                <div>
+                    <label for="amount">Amount</label>
+                    <input id="amount" name="amount" type="number" step="0.0001" min="0.0001" placeholder="0.2500" required />
+                </div>
+                <div>
+                    <label for="cryptoType">Crypto Type</label>
+                    <select id="cryptoType" name="cryptoType" required></select>
+                </div>
+            </div>
+
+            <section class="tx-decorator" id="transactionDecorator">
+                <p><strong>Estimated Fee:</strong> <span id="feePreview">--</span></p>
+                <p><strong>Net Amount:</strong> <span id="netAmountPreview">--</span></p>
+                <p><strong>Metadata:</strong> <span id="metaPreview">Draft transaction</span></p>
+            </section>
+
+            <button class="primary-btn" type="submit">Send Transaction</button>
+            <p class="inline-error" id="txFormError" hidden></p>
+        </form>
+    </article>
+
+    <article class="glass-card" id="historyCard" style="grid-column: 1 / -1;">
+        <header class="card-head">
+            <span class="card-icon">HT</span>
+            <h2>Transaction History</h2>
+            <span class="pill">Proxy loading control</span>
+        </header>
+        <div class="table-wrap">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody"></tbody>
+            </table>
+        </div>
+    </article>
+</section>
+
+<div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+
+@section Scripts {
+    <script type="module">
+        import { walletService, cryptoService } from "/js/dashboard/services.js";
+
+        async function loadBalance() {
+            try {
+                const response = await walletService.getBalance();
+                if (response.balance !== undefined) {
+                    const balanceEl = document.getElementById('walletBalanceValue');
+                    const metaEl = document.getElementById('walletBalanceMeta');
+                    balanceEl.textContent = '$' + response.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    metaEl.textContent = response.walletName || 'Primary wallet | USDT';
+                }
+            } catch (error) {
+                console.error('Error loading balance:', error);
+            }
+        }
+
+        async function loadHistory() {
+            try {
+                const response = await walletService.getHistory();
+                const tbody = document.getElementById('historyTableBody');
+                tbody.innerHTML = '';
+                
+                if (Array.isArray(response) && response.length > 0) {
+                    response.forEach(tx => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${new Date(tx.timestamp).toLocaleString()}</td>
+                            <td>${tx.from || tx.addresses?.from || '--'}</td>
+                            <td>${tx.to || tx.addresses?.to || '--'}</td>
+                            <td>${tx.type || 'transfer'}</td>
+                            <td>${tx.amount.toFixed(4)} ${tx.cryptoType || 'BTC'}</td>
+                            <td><span class="badge" style="background: #00dcb4; color: #0a1929;">${tx.status || 'Completed'}</span></td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No transactions yet</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        async function loadCryptoTypes() {
+            try {
+                const response = await cryptoService.getPrices();
+                const select = document.getElementById('cryptoType');
+                const types = Object.keys(response).slice(0, 5);
+                
+                select.innerHTML = types.map(type => `<option value="${type}">${type}</option>`).join('');
+            } catch (error) {
+                console.error('Error loading crypto types:', error);
+            }
+        }
+
+        document.getElementById('transactionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('/api/wallet/transaction', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        from: formData.get('from'),
+                        to: formData.get('to'),
+                        amount: parseFloat(formData.get('amount')),
+                        cryptoType: formData.get('cryptoType')
+                    })
+                });
+                
+                if (response.ok) {
+                    e.target.reset();
+                    loadBalance();
+                    loadHistory();
+                    showToast('Transaction recorded successfully!', 'success');
+                }
+            } catch (error) {
+                document.getElementById('txFormError').textContent = 'Error: ' + error.message;
+                document.getElementById('txFormError').hidden = false;
+            }
+        });
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            document.getElementById('toastStack').appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Initialize
+        loadBalance();
+        loadHistory();
+        loadCryptoTypes();
+    </script>
+}

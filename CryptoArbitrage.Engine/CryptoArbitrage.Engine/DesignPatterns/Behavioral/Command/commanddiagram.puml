@@ -1,0 +1,47 @@
+@startuml CommandPattern
+!theme plain
+
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #F5F5F5
+skinparam classBorderColor #333333
+skinparam arrowColor #333333
+
+title Command Design Pattern - Crypto Trade Execution
+
+package "Behavioral.Command" {
+    interface ICommand as "<<Command>>\nICommand" {
+        + Name : string
+        + Execute() : string
+        + Undo() : string
+    }
+
+    class ExecuteBuyOrderCommand as "<<ConcreteCommand>>\nExecuteBuyOrderCommand"
+    class ExecuteSellOrderCommand as "<<ConcreteCommand>>\nExecuteSellOrderCommand"
+
+    class TradingBotInvoker as "<<Invoker>>\nTradingBotInvoker" {
+        - _history : Stack<ICommand>
+        + ExecuteCommand(command : ICommand) : string
+        + UndoLastCommand() : string
+    }
+
+    class CommandDemo as "<<Client>>\nCommandDemo"
+}
+
+package "Existing Receiver" {
+    interface IOrderTool as "<<Receiver Interface>>\nIOrderTool"
+    class BinanceOrderTool as "<<ConcreteReceiver>>\nBinanceOrderTool"
+}
+
+ICommand <|.. ExecuteBuyOrderCommand
+ICommand <|.. ExecuteSellOrderCommand
+
+TradingBotInvoker --> ICommand : executes
+ExecuteBuyOrderCommand --> IOrderTool : calls receiver
+ExecuteSellOrderCommand --> IOrderTool : calls receiver
+IOrderTool <|.. BinanceOrderTool
+
+CommandDemo --> TradingBotInvoker : configures
+CommandDemo --> ICommand : creates
+CommandDemo --> BinanceOrderTool : provides receiver
+
+@enduml

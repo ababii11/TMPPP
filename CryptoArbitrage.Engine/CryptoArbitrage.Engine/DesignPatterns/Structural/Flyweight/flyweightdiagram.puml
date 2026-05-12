@@ -1,0 +1,30 @@
+@startuml name
+skinparam classAttributeIconSize 0
+
+class CryptoFlyweightClient {
+    +Run(): string
+}
+class MarketSymbolContext {
+    -BuyPrice: decimal
+    -SellPrice: decimal
+    -ExchangeBuy: string
+    -ExchangeSell: string
+    -flyweight: Flyweight
+    +MarketSymbolContext(factory: FlyweightFactory, repeatingState: string, buyPrice: decimal, sellPrice: decimal, exchangeBuy: string, exchangeSell: string)
+    +Operation(): string
+}
+class FlyweightFactory {
+    -cache: Flyweight[]
+    +GetFlyweight(repeatingState: string): Flyweight
+}
+class Flyweight {
+    -RepeatingState: string
+    +Operation(buyPrice: decimal, sellPrice: decimal, exchangeBuy: string, exchangeSell: string): string
+}
+
+CryptoFlyweightClient o--> MarketSymbolContext
+MarketSymbolContext --> FlyweightFactory : uses in constructor
+MarketSymbolContext --> Flyweight : delegates operation
+FlyweightFactory *--  Flyweight : creates/caches
+
+@enduml

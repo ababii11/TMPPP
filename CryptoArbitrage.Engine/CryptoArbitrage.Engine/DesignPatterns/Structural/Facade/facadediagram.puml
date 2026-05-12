@@ -1,0 +1,45 @@
+@startuml Facade Pattern - Arbitrage Execution
+skinparam classAttributeIconSize 0
+
+class CryptoTraderClient {
+    +Run(): string
+}
+
+class ArbitrageExecutionFacade {
+    -linksToSubsystemObjects
+    -optionalAdditionalFacade: AdditionalArbitrageFacade
+    +SubsystemOperation(traderId: string, pair: string, amount: decimal): string
+}
+
+class AdditionalArbitrageFacade {
+    +AnotherOperation(pair: string, amount: decimal): bool
+}
+
+class OpportunityScannerService {
+    +ScanSpreadPercent(pair: string): decimal
+}
+
+class LiquidityValidationService {
+    +HasSufficientLiquidity(pair: string, amount: decimal): bool
+}
+
+class OrderPlacementService {
+    +PlaceArbitrageOrder(traderId: string, pair: string, amount: decimal): string
+}
+
+class TradeAuditService {
+    +Record(executionId: string, details: string)
+}
+
+CryptoTraderClient --> ArbitrageExecutionFacade
+ArbitrageExecutionFacade --> AdditionalArbitrageFacade
+
+ArbitrageExecutionFacade ..> OpportunityScannerService
+ArbitrageExecutionFacade ..> LiquidityValidationService
+ArbitrageExecutionFacade ..> OrderPlacementService
+ArbitrageExecutionFacade ..> TradeAuditService
+
+AdditionalArbitrageFacade ..> OpportunityScannerService
+AdditionalArbitrageFacade ..> LiquidityValidationService
+
+@enduml

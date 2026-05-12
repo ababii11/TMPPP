@@ -1,0 +1,223 @@
+@{
+    ViewData["Title"] = "Login - CryptoManager";
+}
+
+<div class="login-container">
+    <div class="login-card glass-card">
+        <div class="login-header">
+            <h1>CryptoManager</h1>
+            <p class="login-subtitle">Patterns in motion</p>
+            <p class="login-description">Crypto Portfolio Command Center</p>
+        </div>
+
+        <form method="post" action="/Login/Login" class="login-form">
+            @Html.AntiForgeryToken()
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    class="form-control login-input"
+                    placeholder="Enter your username" 
+                    required 
+                    minlength="3" />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="form-control login-input"
+                    placeholder="Enter your password" 
+                    required 
+                    minlength="3" />
+            </div>
+
+            @if (ViewData["Error"] != null)
+            {
+                <div class="alert alert-danger login-error">
+                    @ViewData["Error"]
+                </div>
+            }
+
+            <button type="submit" class="login-btn primary-btn">Login</button>
+        </form>
+
+        <div class="login-footer">
+            <p>Users are saved on first login. Use any username/password (min 3 chars).</p>
+        </div>
+    </div>
+
+    <div class="login-stats">
+        <div class="login-stat-card glass-card">
+            <h3>Live Source</h3>
+            <p>Binance + Kraken</p>
+        </div>
+        <div class="login-stat-card glass-card">
+            <h3>Persistence</h3>
+            <p>SQL Server Snapshots</p>
+        </div>
+        <div class="login-stat-card glass-card">
+            <h3>Patterns</h3>
+            <p>Observer, Command, Memento</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(0, 150, 150, 0.1) 0%, rgba(0, 100, 150, 0.15) 100%);
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    border: 1px solid rgba(0, 220, 180, 0.3);
+    border-radius: 12px;
+    background: rgba(15, 25, 40, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-header h1 {
+    font-size: 28px;
+    color: #00dcb4;
+    margin: 0 0 5px 0;
+    font-weight: 700;
+}
+
+.login-subtitle {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 5px 0;
+}
+
+.login-description {
+    font-size: 14px;
+    color: #aaa;
+    margin-top: 10px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: #aaa;
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.login-input {
+    padding: 12px 14px;
+    background: rgba(0, 220, 180, 0.05);
+    border: 1px solid rgba(0, 220, 180, 0.2);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.login-input:focus {
+    outline: none;
+    background: rgba(0, 220, 180, 0.1);
+    border-color: rgba(0, 220, 180, 0.5);
+    box-shadow: 0 0 10px rgba(0, 220, 180, 0.2);
+}
+
+.login-btn {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #00dcb4 0%, #00b8a0 100%);
+    color: #0a1929;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 220, 180, 0.3);
+}
+
+.login-error {
+    background: rgba(220, 50, 50, 0.1);
+    border: 1px solid rgba(220, 50, 50, 0.3);
+    color: #ff6b6b;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 220, 180, 0.1);
+}
+
+.login-footer p {
+    color: #888;
+    font-size: 12px;
+}
+
+.login-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 30px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-stat-card {
+    padding: 20px;
+    text-align: center;
+    border: 1px solid rgba(0, 220, 180, 0.2);
+}
+
+.login-stat-card h3 {
+    color: #00dcb4;
+    font-size: 12px;
+    text-transform: uppercase;
+    margin: 0 0 8px 0;
+}
+
+.login-stat-card p {
+    color: #aaa;
+    font-size: 13px;
+    margin: 0;
+}
+</style>

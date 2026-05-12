@@ -1,0 +1,38 @@
+@startuml name
+left to right direction
+
+class Client
+
+interface ICryptoService {
+    +ExecuteTransaction(fromWallet: String, toWallet: String, amount: Decimal, cryptocurrency: String): String
+    +GetWalletBalance(walletAddress: String, cryptocurrency: String): Decimal
+    +GetCryptoPrice(cryptocurrency: String): Decimal
+}
+
+class CryptoServiceProxy {
+    -realService: ICryptoService
+    -apiKey: String
+    
+    +CryptoServiceProxy(service: ICryptoService, apiKey: String)
+    -checkAccess(): Boolean
+    
+    +ExecuteTransaction(fromWallet: String, toWallet: String, amount: Decimal, cryptocurrency: String): String
+    +GetWalletBalance(walletAddress: String, cryptocurrency: String): Decimal
+    +GetCryptoPrice(cryptocurrency: String): Decimal
+}
+
+class RealCryptoService {
+    -serviceId: String
+    -transactionCounter: int
+    
+    +RealCryptoService(serviceId: String)
+    +ExecuteTransaction(fromWallet: String, toWallet: String, amount: Decimal, cryptocurrency: String): String
+    +GetWalletBalance(walletAddress: String, cryptocurrency: String): Decimal
+    +GetCryptoPrice(cryptocurrency: String): Decimal
+}
+
+Client --> ICryptoService : uses
+CryptoServiceProxy ..|> ICryptoService
+RealCryptoService ..|> ICryptoService
+CryptoServiceProxy o--> ICryptoService : delegates
+@enduml

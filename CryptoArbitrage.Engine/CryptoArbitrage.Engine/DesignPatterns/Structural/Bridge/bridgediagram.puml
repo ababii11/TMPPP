@@ -1,0 +1,95 @@
+@startuml BridgePattern
+!theme plain
+
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #F0F0F0
+skinparam classBorderColor #333333
+skinparam arrowColor #333333
+
+title Bridge Design Pattern - Crypto System
+
+package "Client" {
+    class Client as "Client Code" {
+        - Creates operations
+        - Configures implementations
+    }
+}
+
+package "Abstraction Hierarchy" {
+    abstract class CryptoOperation as "<<Abstraction>>\nCryptoOperation" {
+        # implementor: ICryptoImplementor
+        + Execute(): void
+        + GetOperationInfo(): string
+        + SwitchImplementor(newImpl): void
+    }
+
+    class TransferOperation as "<<RefinedAbstraction>>\nTransferOperation" {
+        - fromWallet: string
+        - toWallet: string
+        - amount: decimal
+        - cryptocurrency: string
+        + Execute(): void
+    }
+
+    class PaymentOperation as "<<RefinedAbstraction>>\nPaymentOperation" {
+        - merchantId: string
+        - paymentAmount: decimal
+        - currency: string
+        - orderId: string
+        + Execute(): void
+    }
+}
+
+package "Implementation Hierarchy" {
+    interface ICryptoImplementor as "<<Implementor>>\nICryptoImplementor" {
+        + ProcessTransaction(data): string
+        + EncryptData(plainData): string
+        + ValidateBlock(blockData): bool
+        + GetImplementationName(): string
+    }
+
+    class BlockchainNetwork as "<<ConcreteImplementor>>\nBlockchainNetwork" {
+        - networkName: string
+        - transactionCounter: int
+        + ProcessTransaction(data): string
+        + EncryptData(plainData): string
+        + ValidateBlock(blockData): bool
+        + GetImplementationName(): string
+    }
+
+    class CryptoAPIService as "<<ConcreteImplementor>>\nCryptoAPIService" {
+        - apiProvider: string
+        - apiKey: string
+        + ProcessTransaction(data): string
+        + EncryptData(plainData): string
+        + ValidateBlock(blockData): bool
+        + GetImplementationName(): string
+    }
+}
+
+' Relationships
+Client --> CryptoOperation : creates
+CryptoOperation --> ICryptoImplementor : has-a (bridge)
+
+CryptoOperation <|-- TransferOperation : extends
+CryptoOperation <|-- PaymentOperation : extends
+
+ICryptoImplementor <|.. BlockchainNetwork : implements
+ICryptoImplementor <|.. CryptoAPIService : implements
+
+note right of CryptoOperation
+    The BRIDGE: holds reference to ICryptoImplementor
+    Allows abstraction and implementation to vary independently
+end note
+
+note bottom of BlockchainNetwork
+    Simulates blockchain networks
+    (Ethereum, Bitcoin, etc.)
+end note
+
+note bottom of CryptoAPIService
+    Simulates external crypto APIs
+    (Binance, CoinGecko, etc.)
+end note
+
+@enduml
