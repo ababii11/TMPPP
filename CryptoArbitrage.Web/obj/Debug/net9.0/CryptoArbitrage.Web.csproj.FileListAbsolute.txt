@@ -157,7 +157,6 @@ C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\CryptoArbitrage.We
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\CryptoArbitrage.Web.MvcApplicationPartsAssemblyInfo.cache
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\CryptoArbitrage.Web.RazorAssemblyInfo.cache
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\CryptoArbitrage.Web.RazorAssemblyInfo.cs
-C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\CryptoArbitrage.Web.sourcelink.json
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\rjimswa.dswa.cache.json
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Web\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
