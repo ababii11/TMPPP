@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Net.WebSockets;
+using System.Text;
 using System.Text.Json;
 
 namespace CryptoArbitrage.Web.Services.MarketData;
@@ -14,6 +16,7 @@ public class KrakenWsHostedService : BackgroundService
     private ClientWebSocket? _ws;
     private int _reconnectDelayMs = 1000;
     private const int MaxReconnectDelayMs = 30000;
+    private readonly StringBuilder _messageBuffer = new();
 
     public KrakenWsHostedService(IQuoteStore quoteStore, ILogger<KrakenWsHostedService> logger)
     {
@@ -48,6 +51,7 @@ public class KrakenWsHostedService : BackgroundService
             await _ws.ConnectAsync(new Uri(uri), stoppingToken);
             _logger.LogInformation("Kraken WS connected");
             _reconnectDelayMs = 1000;
+            _messageBuffer.Clear();
 
             // Send subscription
             var subscribeMsg = new
@@ -74,7 +78,15 @@ public class KrakenWsHostedService : BackgroundService
                 }
                 else if (result.Count > 0)
                 {
-                    ProcessKrakenMessage(buffer, result.Count);
+                    // Accumulate message until EndOfMessage
+                    var messageText = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                    _messageBuffer.Append(messageText);
+
+                    if (result.EndOfMessage)
+                    {
+                        ProcessKrakenMessage(_messageBuffer.ToString());
+                        _messageBuffer.Clear();
+                    }
                 }
             }
         }
@@ -84,11 +96,10 @@ public class KrakenWsHostedService : BackgroundService
         }
     }
 
-    private void ProcessKrakenMessage(byte[] buffer, int count)
+    private void ProcessKrakenMessage(string json)
     {
         try
         {
-            var json = System.Text.Encoding.UTF8.GetString(buffer, 0, count);
             using var doc = JsonDocument.Parse(json);
 
             var root = doc.RootElement;
@@ -119,8 +130,9 @@ public class KrakenWsHostedService : BackgroundService
             var askStr = askArr.GetArrayLength() > 0 ? askArr[0].GetString() : "";
             var bidStr = bidArr.GetArrayLength() > 0 ? bidArr[0].GetString() : "";
 
-            if (!decimal.TryParse(askStr, out var ask) ||
-                !decimal.TryParse(bidStr, out var bid))
+            // Parse with InvariantCulture
+            if (!decimal.TryParse(askStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var ask) ||
+                !decimal.TryParse(bidStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var bid))
                 return;
 
             var ts = DateTime.UtcNow;

@@ -23,6 +23,7 @@
     const krakenAsk = document.getElementById('krakenAsk');
     const spreadValue = document.getElementById('spreadValue');
     const spreadPct = document.getElementById('spreadPct');
+    const chartLastSync = document.getElementById('chartLastSync');
 
     // Skip if elements missing
     if (!symbolSelect || !spreadStatus) {
@@ -49,10 +50,26 @@
     }
 
     /**
+     * Format time as HH:mm:ss
+     */
+    function formatTime(date) {
+        const h = String(date.getHours()).padStart(2, '0');
+        const m = String(date.getMinutes()).padStart(2, '0');
+        const s = String(date.getSeconds()).padStart(2, '0');
+        return `${h}:${m}:${s}`;
+    }
+
+    /**
      * Poll the spread endpoint
      */
     async function pollSpread() {
         const symbol = (symbolSelect.value || 'BTC').toUpperInvariant();
+
+        // Check for unsupported symbols
+        if (!['BTC', 'ETH'].includes(symbol)) {
+            spreadStatus.textContent = 'Unsupported symbol (only BTC/ETH live for now).';
+            return;
+        }
 
         try {
             const response = await fetch(`/api/market/spread?symbol=${symbol}`);
@@ -89,12 +106,16 @@
                 spreadPct.textContent = formatPercent(data.best.grossSpreadPct);
             }
 
-            // Update status
+            // Update status and sync time
             const ts = new Date(data.timestampUtc);
             const now = new Date();
             const ageMs = now - ts;
             const ageSec = Math.floor(ageMs / 1000);
             spreadStatus.textContent = `Updated ${ageSec}s ago`;
+
+            if (chartLastSync) {
+                chartLastSync.textContent = `Updated ${formatTime(now)}`;
+            }
 
         } catch (error) {
             console.warn('Spread poll error:', error);

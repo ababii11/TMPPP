@@ -10,7 +10,9 @@ C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\ob
 C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\obj\Debug\net9.0\refint\CryptoArbitrage.Engine.dll
 C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\obj\Debug\net9.0\CryptoArbitrage.Engine.pdb
 C:\Users\HP\RiderProjects\TMPPP\CryptoArbitrage.Engine\CryptoArbitrage.Engine\obj\Debug\net9.0\ref\CryptoArbitrage.Engine.dll
+C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\bin\Debug\net9.0\CryptoArbitrage.Engine.exe
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\bin\Debug\net9.0\CryptoArbitrage.Engine.deps.json
+C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\bin\Debug\net9.0\CryptoArbitrage.Engine.runtimeconfig.json
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\bin\Debug\net9.0\CryptoArbitrage.Engine.dll
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\bin\Debug\net9.0\CryptoArbitrage.Engine.pdb
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\obj\Debug\net9.0\CryptoArbitrage.Engine.GeneratedMSBuildEditorConfig.editorconfig
@@ -21,7 +23,5 @@ C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\obj\Debug\net9.0\CryptoArbitrage
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\obj\Debug\net9.0\CryptoArbitrage.Engine.dll
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\obj\Debug\net9.0\refint\CryptoArbitrage.Engine.dll
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\obj\Debug\net9.0\CryptoArbitrage.Engine.pdb
-C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\obj\Debug\net9.0\ref\CryptoArbitrage.Engine.dll
-C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\bin\Debug\net9.0\CryptoArbitrage.Engine.exe
-C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\bin\Debug\net9.0\CryptoArbitrage.Engine.runtimeconfig.json
 C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\obj\Debug\net9.0\CryptoArbitrage.Engine.genruntimeconfig.cache
+C:\ProiectArbitraj\TMPPP\CryptoArbitrage.Engine\obj\Debug\net9.0\ref\CryptoArbitrage.Engine.dll

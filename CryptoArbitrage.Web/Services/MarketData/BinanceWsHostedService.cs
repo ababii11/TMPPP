@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Net.WebSockets;
+using System.Text;
 using System.Text.Json;
 
 namespace CryptoArbitrage.Web.Services.MarketData;
@@ -14,6 +16,7 @@ public class BinanceWsHostedService : BackgroundService
     private ClientWebSocket? _ws;
     private int _reconnectDelayMs = 1000;
     private const int MaxReconnectDelayMs = 30000;
+    private readonly StringBuilder _messageBuffer = new();
 
     public BinanceWsHostedService(IQuoteStore quoteStore, ILogger<BinanceWsHostedService> logger)
     {
@@ -48,6 +51,7 @@ public class BinanceWsHostedService : BackgroundService
             await _ws.ConnectAsync(new Uri(uri), stoppingToken);
             _logger.LogInformation("Binance WS connected");
             _reconnectDelayMs = 1000;
+            _messageBuffer.Clear();
 
             var buffer = new byte[8192];
             while (_ws.State == WebSocketState.Open && !stoppingToken.IsCancellationRequested)
@@ -62,7 +66,15 @@ public class BinanceWsHostedService : BackgroundService
                 }
                 else if (result.Count > 0)
                 {
-                    ProcessBinanceMessage(buffer, result.Count);
+                    // Accumulate message until EndOfMessage
+                    var messageText = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                    _messageBuffer.Append(messageText);
+
+                    if (result.EndOfMessage)
+                    {
+                        ProcessBinanceMessage(_messageBuffer.ToString());
+                        _messageBuffer.Clear();
+                    }
                 }
             }
         }
@@ -72,11 +84,10 @@ public class BinanceWsHostedService : BackgroundService
         }
     }
 
-    private void ProcessBinanceMessage(byte[] buffer, int count)
+    private void ProcessBinanceMessage(string json)
     {
         try
         {
-            var json = System.Text.Encoding.UTF8.GetString(buffer, 0, count);
             using var doc = JsonDocument.Parse(json);
 
             if (!doc.RootElement.TryGetProperty("data", out var dataEl))
@@ -90,10 +101,32 @@ public class BinanceWsHostedService : BackgroundService
                 return;
 
             var sourceSymbol = sEl.GetString() ?? "";
-            if (!decimal.TryParse(bEl.GetString(), out var bid) ||
-                !decimal.TryParse(aEl.GetString(), out var ask) ||
-                !long.TryParse(eEl.GetString(), out var tsMs))
+            
+            // Parse bid/ask with InvariantCulture
+            var bidStr = bEl.GetString() ?? "";
+            var askStr = aEl.GetString() ?? "";
+            if (!decimal.TryParse(bidStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var bid) ||
+                !decimal.TryParse(askStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var ask))
                 return;
+
+            // Parse E as long (it's numeric in Binance JSON, not string)
+            long tsMs;
+            if (eEl.ValueKind == JsonValueKind.String)
+            {
+                // Handle string case
+                if (!long.TryParse(eEl.GetString(), out tsMs))
+                    return;
+            }
+            else if (eEl.ValueKind == JsonValueKind.Number)
+            {
+                // Handle numeric case
+                if (!eEl.TryGetInt64(out tsMs))
+                    return;
+            }
+            else
+            {
+                return;
+            }
 
             var symbol = MapBinanceSymbol(sourceSymbol);
             if (string.IsNullOrEmpty(symbol))
